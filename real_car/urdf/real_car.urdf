@@ -1,0 +1,2326 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="real_car">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.0087246 0.0014336 0.00059799"
+        rpy="0 0 0" />
+      <mass
+        value="0.03" />
+      <inertia
+        ixx="3.0956E-08"
+        ixy="-6.4103E-13"
+        ixz="-1.6189E-24"
+        iyy="7.893E-08"
+        iyz="-1.6924E-25"
+        izz="4.8852E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="lb">
+    <inertial>
+      <origin
+        xyz="7.1629E-08 -2.8345E-08 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="0.00050655" />
+      <inertia
+        ixx="7.2925E-09"
+        ixy="1.9868E-14"
+        ixz="2.959E-14"
+        iyy="7.2958E-09"
+        iyz="-2.8717E-14"
+        izz="1.2478E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/lb.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.38431 0.38431 0.38431 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/lb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="lb"
+    type="continuous">
+    <origin
+      xyz="-0.0173100917486529 -0.0115979942316037 0.00254"
+      rpy="1.5707963267949 0.0536675235862468 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="lb" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="ls1">
+    <inertial>
+      <origin
+        xyz="-0.0052845 0.0050917 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.6548E-05" />
+      <inertia
+        ixx="2.7864E-10"
+        ixy="3.5037E-11"
+        ixz="-1.1741E-28"
+        iyy="6.1832E-11"
+        iyz="-4.232E-28"
+        izz="2.2985E-10" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/ls1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.38431 0.38431 0.38431 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/ls1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ls1"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 -1.5708" />
+    <parent
+      link="lb" />
+    <child
+      link="ls1" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l11">
+    <inertial>
+      <origin
+        xyz="-0.0062116 0.0020435 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.5932E-05" />
+      <inertia
+        ixx="3.651E-11"
+        ixy="-7.6675E-13"
+        ixz="-2.4388E-27"
+        iyy="3.8151E-11"
+        iyz="6.4621E-28"
+        izz="8.2764E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l11.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.38431 0.38431 0.38431 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l11.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l11"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls1" />
+    <child
+      link="l11" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l12">
+    <inertial>
+      <origin
+        xyz="-0.00611092708778156 0.00419933857679305 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.15299479166699E-05" />
+      <inertia
+        ixx="2.64618315913078E-11"
+        ixy="-4.15298069981526E-13"
+        ixz="-3.62020903754829E-28"
+        iyy="2.58785618371161E-11"
+        iyz="2.13548451380614E-27"
+        izz="4.29894377563258E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l12.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l12.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l12"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls1" />
+    <child
+      link="l12" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l13">
+    <inertial>
+      <origin
+        xyz="-0.00614266566829437 0.00632986330314675 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="7.12760416665123E-06" />
+      <inertia
+        ixx="1.63479264992618E-11"
+        ixy="-1.02250148486113E-13"
+        ixz="1.8365607935026E-28"
+        iyy="1.52849552371794E-11"
+        iyz="1.09221090730897E-29"
+        izz="1.93453104206101E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l13.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l13.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l13"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls1" />
+    <child
+      link="l13" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l14">
+    <inertial>
+      <origin
+        xyz="-0.00624183898977224 0.00815314698806191 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.89773207859235E-06" />
+      <inertia
+        ixx="6.37231032450358E-12"
+        ixy="2.90227817683515E-14"
+        ixz="-3.90202968431673E-28"
+        iyy="6.08740596689973E-12"
+        iyz="7.28923928002558E-28"
+        izz="3.8583263060184E-13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l14.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l14.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l14"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls1" />
+    <child
+      link="l14" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="ls2">
+    <inertial>
+      <origin
+        xyz="-0.00528451978484172 0.00509171594747074 0.00250000000000001"
+        rpy="0 0 0" />
+      <mass
+        value="2.65475633543081E-05" />
+      <inertia
+        ixx="2.78635017566843E-10"
+        ixy="3.50367571275281E-11"
+        ixz="-2.75339765502131E-26"
+        iyy="6.18321023928155E-11"
+        iyz="6.82649406545328E-27"
+        izz="2.29852272650042E-10" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/ls2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/ls2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ls2"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 -3.1416" />
+    <parent
+      link="lb" />
+    <child
+      link="ls2" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l21">
+    <inertial>
+      <origin
+        xyz="-0.00621161774695974 0.00204351624207291 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.5932291666647E-05" />
+      <inertia
+        ixx="3.65100666164903E-11"
+        ixy="-7.66754062161231E-13"
+        ixz="-1.65784113067065E-26"
+        iyy="3.81508764807896E-11"
+        iyz="2.33286671132931E-27"
+        izz="8.27639448625057E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l21.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l21.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l21"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls2" />
+    <child
+      link="l21" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l22">
+    <inertial>
+      <origin
+        xyz="-0.00611092708778246 0.00419933857679377 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.15299479166699E-05" />
+      <inertia
+        ixx="2.64618315913078E-11"
+        ixy="-4.15298069981573E-13"
+        ixz="-1.18647318313283E-26"
+        iyy="2.58785618371162E-11"
+        iyz="-3.43813056262297E-28"
+        izz="4.29894377563262E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l22.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l22.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l22"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls2" />
+    <child
+      link="l22" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l23">
+    <inertial>
+      <origin
+        xyz="-0.00614266566829509 0.00632986330314741 0.00250000000000001"
+        rpy="0 0 0" />
+      <mass
+        value="7.12760416665123E-06" />
+      <inertia
+        ixx="1.63479264992618E-11"
+        ixy="-1.02250148486211E-13"
+        ixz="-7.43213338207884E-27"
+        iyy="1.52849552371794E-11"
+        iyz="7.5775580184949E-28"
+        izz="1.93453104206102E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l23.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l23.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l23"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls2" />
+    <child
+      link="l23" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l24">
+    <inertial>
+      <origin
+        xyz="-0.00624183898977278 0.00815314698806262 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.89773207859234E-06" />
+      <inertia
+        ixx="6.37231032450353E-12"
+        ixy="2.90227817683242E-14"
+        ixz="-3.38668444291571E-27"
+        iyy="6.0874059668997E-12"
+        iyz="-1.13001246817957E-27"
+        izz="3.85832630601811E-13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l24.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l24.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l24"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls2" />
+    <child
+      link="l24" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="ls3">
+    <inertial>
+      <origin
+        xyz="-0.00528451978484168 0.00509171594747075 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.65475633543081E-05" />
+      <inertia
+        ixx="2.78635017566843E-10"
+        ixy="3.50367571275266E-11"
+        ixz="-2.05928385401897E-26"
+        iyy="6.1832102392815E-11"
+        iyz="1.06461271110117E-25"
+        izz="2.29852272650041E-10" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/ls3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/ls3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ls3"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 1.5708" />
+    <parent
+      link="lb" />
+    <child
+      link="ls3" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l31">
+    <inertial>
+      <origin
+        xyz="-0.00621161774695991 0.00204351624207161 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.5932291666647E-05" />
+      <inertia
+        ixx="3.65100666164903E-11"
+        ixy="-7.66754062161233E-13"
+        ixz="6.56749977069224E-30"
+        iyy="3.81508764807895E-11"
+        iyz="-1.35137261788348E-26"
+        izz="8.27639448625055E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l31.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l31.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l31"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls3" />
+    <child
+      link="l31" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l32">
+    <inertial>
+      <origin
+        xyz="-0.00611092708778263 0.00419933857679248 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.15299479166699E-05" />
+      <inertia
+        ixx="2.64618315913077E-11"
+        ixy="-4.15298069981578E-13"
+        ixz="-5.49045157099988E-28"
+        iyy="2.58785618371161E-11"
+        iyz="-1.18679960827535E-26"
+        izz="4.29894377563259E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l32.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l32.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l32"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls3" />
+    <child
+      link="l32" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l33">
+    <inertial>
+      <origin
+        xyz="-0.00614266566829525 0.00632986330314617 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="7.12760416665123E-06" />
+      <inertia
+        ixx="1.63479264992618E-11"
+        ixy="-1.02250148486206E-13"
+        ixz="-1.86368805982825E-29"
+        iyy="1.52849552371794E-11"
+        iyz="-7.8382764826607E-27"
+        izz="1.93453104206101E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l33.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l33.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l33"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls3" />
+    <child
+      link="l33" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l34">
+    <inertial>
+      <origin
+        xyz="-0.00624183898977296 0.00815314698806133 0.00249999999999999"
+        rpy="0 0 0" />
+      <mass
+        value="2.89773207859235E-06" />
+      <inertia
+        ixx="6.37231032450354E-12"
+        ixy="2.90227817683262E-14"
+        ixz="-2.16735456715655E-28"
+        iyy="6.08740596689971E-12"
+        iyz="-2.5731447653858E-27"
+        izz="3.85832630601813E-13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l34.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l34.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l34"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls3" />
+    <child
+      link="l34" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="ls4">
+    <inertial>
+      <origin
+        xyz="-0.00528451978484214 0.00509171594747023 0.00249999999999999"
+        rpy="0 0 0" />
+      <mass
+        value="2.65475633543081E-05" />
+      <inertia
+        ixx="2.78635017566837E-10"
+        ixy="3.50367571275465E-11"
+        ixz="-3.60711355458789E-27"
+        iyy="6.18321023928214E-11"
+        iyz="4.28746136281905E-26"
+        izz="2.29852272650041E-10" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/ls4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/ls4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ls4"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="lb" />
+    <child
+      link="ls4" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l41">
+    <inertial>
+      <origin
+        xyz="-0.0062116177469588 0.00204351624207069 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.5932291666647E-05" />
+      <inertia
+        ixx="3.65100666164905E-11"
+        ixy="-7.66754062161382E-13"
+        ixz="-1.71575887873068E-27"
+        iyy="3.81508764807895E-11"
+        iyz="6.91776187676686E-28"
+        izz="8.27639448625058E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l41.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l41.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l41"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls4" />
+    <child
+      link="l41" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l42">
+    <inertial>
+      <origin
+        xyz="-0.00611092708778171 0.00419933857679177 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.15299479166699E-05" />
+      <inertia
+        ixx="2.64618315913078E-11"
+        ixy="-4.15298069981523E-13"
+        ixz="1.9198980702464E-27"
+        iyy="2.58785618371162E-11"
+        iyz="8.0329696014009E-28"
+        izz="4.2989437756326E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l42.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l42.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l42"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls4" />
+    <child
+      link="l42" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l43">
+    <inertial>
+      <origin
+        xyz="-0.00614266566829453 0.00632986330314546 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="7.12760416665123E-06" />
+      <inertia
+        ixx="1.63479264992618E-11"
+        ixy="-1.02250148486114E-13"
+        ixz="5.48553958650957E-28"
+        iyy="1.52849552371794E-11"
+        iyz="-2.56162410640345E-28"
+        izz="1.93453104206101E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l43.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l43.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l43"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls4" />
+    <child
+      link="l43" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="l44">
+    <inertial>
+      <origin
+        xyz="-0.00624183898977252 0.00815314698806034 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.89773207859234E-06" />
+      <inertia
+        ixx="6.37231032450357E-12"
+        ixy="2.90227817683524E-14"
+        ixz="-6.20102868658803E-30"
+        iyy="6.08740596689972E-12"
+        iyz="2.2417005965038E-28"
+        izz="3.85832630601844E-13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l44.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/l44.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="l44"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="ls4" />
+    <child
+      link="l44" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="rb">
+    <inertial>
+      <origin
+        xyz="7.1629223215991E-08 -2.83454133153619E-08 -0.00249998841847457"
+        rpy="0 0 0" />
+      <mass
+        value="0.000506553364861363" />
+      <inertia
+        ixx="7.29246193922965E-09"
+        ixy="1.98681003589206E-14"
+        ixz="2.95895923367271E-14"
+        iyy="7.29577514686126E-09"
+        iyz="-2.8717094858962E-14"
+        izz="1.24776320220825E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rb.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rb.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rb"
+    type="continuous">
+    <origin
+      xyz="-0.01731 0.010402 0.00254"
+      rpy="1.5708 0.053668 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rb" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+  <link
+    name="rs1">
+    <inertial>
+      <origin
+        xyz="-0.00528451978484214 0.00509171594746946 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.65475633543081E-05" />
+      <inertia
+        ixx="2.78635017566837E-10"
+        ixy="3.50367571275464E-11"
+        ixz="-4.1838420902641E-27"
+        iyy="6.18321023928214E-11"
+        iyz="8.22936440214244E-27"
+        izz="2.29852272650042E-10" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rs1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rs1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rs1"
+    type="fixed">
+    <origin
+      xyz="0 0 -0.005"
+      rpy="0 0 -1.5708" />
+    <parent
+      link="rb" />
+    <child
+      link="rs1" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r11">
+    <inertial>
+      <origin
+        xyz="-0.00621161774695879 0.0020435162420701 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.5932291666647E-05" />
+      <inertia
+        ixx="3.65100666164905E-11"
+        ixy="-7.66754062161368E-13"
+        ixz="1.15923587371108E-27"
+        iyy="3.81508764807895E-11"
+        iyz="-3.31496048998601E-29"
+        izz="8.27639448625057E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r11.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r11.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r11"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs1" />
+    <child
+      link="r11" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r12">
+    <inertial>
+      <origin
+        xyz="-0.00611092708778168 0.00419933857679097 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.15299479166699E-05" />
+      <inertia
+        ixx="2.64618315913078E-11"
+        ixy="-4.15298069981528E-13"
+        ixz="4.76976666521945E-28"
+        iyy="2.58785618371161E-11"
+        iyz="-4.16154485309091E-28"
+        izz="4.29894377563259E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r12.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r12.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r12"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs1" />
+    <child
+      link="r12" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r13">
+    <inertial>
+      <origin
+        xyz="-0.00614266566829448 0.00632986330314467 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="7.12760416665125E-06" />
+      <inertia
+        ixx="1.63479264992619E-11"
+        ixy="-1.02250148486123E-13"
+        ixz="-6.44369315730363E-29"
+        iyy="1.52849552371794E-11"
+        iyz="-2.02427364642806E-27"
+        izz="1.93453104206103E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r13.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r13.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r13"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs1" />
+    <child
+      link="r13" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r14">
+    <inertial>
+      <origin
+        xyz="-0.00624183898977244 0.00815314698805992 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.89773207859236E-06" />
+      <inertia
+        ixx="6.37231032450358E-12"
+        ixy="2.9022781768346E-14"
+        ixz="-3.78503661891042E-28"
+        iyy="6.08740596689974E-12"
+        iyz="3.41616188438868E-28"
+        izz="3.85832630601827E-13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r14.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r14.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r14"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs1" />
+    <child
+      link="r14" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="rs2">
+    <inertial>
+      <origin
+        xyz="-0.00528451978484126 0.00509171594747033 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.65475633543081E-05" />
+      <inertia
+        ixx="2.78635017566838E-10"
+        ixy="3.5036757127545E-11"
+        ixz="-3.97766139525933E-27"
+        iyy="6.1832102392821E-11"
+        iyz="4.44941018725586E-26"
+        izz="2.29852272650042E-10" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rs2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rs2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rs2"
+    type="fixed">
+    <origin
+      xyz="0 0 -0.005"
+      rpy="0 0 -3.1416" />
+    <parent
+      link="rb" />
+    <child
+      link="rs2" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r21">
+    <inertial>
+      <origin
+        xyz="-0.00621161774695778 0.00204351624207224 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.5932291666647E-05" />
+      <inertia
+        ixx="3.65100666164905E-11"
+        ixy="-7.66754062161368E-13"
+        ixz="1.09701929443736E-28"
+        iyy="3.81508764807895E-11"
+        iyz="4.78281653644758E-28"
+        izz="8.27639448625057E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r21.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r21.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r21"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs2" />
+    <child
+      link="r21" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r22">
+    <inertial>
+      <origin
+        xyz="-0.00611092708778068 0.00419933857679311 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.152994791667E-05" />
+      <inertia
+        ixx="2.64618315913079E-11"
+        ixy="-4.1529806998153E-13"
+        ixz="1.80138235676245E-27"
+        iyy="2.58785618371162E-11"
+        iyz="1.87601805813314E-27"
+        izz="4.2989437756326E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r22.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r22.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r22"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs2" />
+    <child
+      link="r22" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r23">
+    <inertial>
+      <origin
+        xyz="-0.00614266566829348 0.0063298633031468 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="7.12760416665124E-06" />
+      <inertia
+        ixx="1.63479264992618E-11"
+        ixy="-1.02250148486121E-13"
+        ixz="1.76353530257262E-28"
+        iyy="1.52849552371794E-11"
+        iyz="-1.79745008227882E-27"
+        izz="1.93453104206102E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r23.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r23.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r23"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs2" />
+    <child
+      link="r23" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r24">
+    <inertial>
+      <origin
+        xyz="-0.00624183898977133 0.00815314698806196 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.89773207859235E-06" />
+      <inertia
+        ixx="6.37231032450358E-12"
+        ixy="2.90227817683507E-14"
+        ixz="-3.30498378541698E-28"
+        iyy="6.08740596689973E-12"
+        iyz="2.94685362149075E-28"
+        izz="3.8583263060184E-13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r24.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r24.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r24"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs2" />
+    <child
+      link="r24" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="rs3">
+    <inertial>
+      <origin
+        xyz="-0.00528451978484168 0.0050917159474716 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.65475633543081E-05" />
+      <inertia
+        ixx="2.78635017566844E-10"
+        ixy="3.50367571275266E-11"
+        ixz="5.07040033108573E-27"
+        iyy="6.1832102392815E-11"
+        iyz="2.32850037484958E-26"
+        izz="2.29852272650042E-10" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rs3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rs3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rs3"
+    type="fixed">
+    <origin
+      xyz="0 0 -0.005"
+      rpy="0 0 1.5708" />
+    <parent
+      link="rb" />
+    <child
+      link="rs3" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r31">
+    <inertial>
+      <origin
+        xyz="-0.00621161774695977 0.00204351624207371 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.5932291666647E-05" />
+      <inertia
+        ixx="3.65100666164904E-11"
+        ixy="-7.66754062161235E-13"
+        ixz="5.43882927922147E-27"
+        iyy="3.81508764807896E-11"
+        iyz="-5.47658313293893E-28"
+        izz="8.27639448625056E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r31.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r31.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r31"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs3" />
+    <child
+      link="r31" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r32">
+    <inertial>
+      <origin
+        xyz="-0.0061109270877825 0.00419933857679458 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.152994791667E-05" />
+      <inertia
+        ixx="2.64618315913078E-11"
+        ixy="-4.15298069981572E-13"
+        ixz="4.86563291574808E-27"
+        iyy="2.58785618371163E-11"
+        iyz="5.91116360655138E-29"
+        izz="4.29894377563259E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r32.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r32.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r32"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs3" />
+    <child
+      link="r32" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r33">
+    <inertial>
+      <origin
+        xyz="-0.00614266566829513 0.00632986330314828 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="7.12760416665125E-06" />
+      <inertia
+        ixx="1.63479264992618E-11"
+        ixy="-1.02250148486203E-13"
+        ixz="2.15853163079319E-27"
+        iyy="1.52849552371794E-11"
+        iyz="2.14334551783478E-28"
+        izz="1.93453104206103E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r33.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r33.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r33"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs3" />
+    <child
+      link="r33" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r34">
+    <inertial>
+      <origin
+        xyz="-0.00624183898977285 0.00815314698806343 0.00249999999999999"
+        rpy="0 0 0" />
+      <mass
+        value="2.89773207859236E-06" />
+      <inertia
+        ixx="6.37231032450358E-12"
+        ixy="2.9022781768327E-14"
+        ixz="9.11299513537247E-28"
+        iyy="6.08740596689974E-12"
+        iyz="-1.52729969579014E-27"
+        izz="3.8583263060182E-13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r34.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r34.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r34"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs3" />
+    <child
+      link="r34" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="rs4">
+    <inertial>
+      <origin
+        xyz="-0.00528451978484218 0.00509171594747109 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.65475633543081E-05" />
+      <inertia
+        ixx="2.78635017566849E-10"
+        ixy="3.50367571275112E-11"
+        ixz="2.08052662498966E-27"
+        iyy="6.18321023928101E-11"
+        iyz="1.86315371516972E-26"
+        izz="2.29852272650042E-10" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rs4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rs4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rs4"
+    type="fixed">
+    <origin
+      xyz="0 0 -0.005"
+      rpy="0 0 0" />
+    <parent
+      link="rb" />
+    <child
+      link="rs4" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r41">
+    <inertial>
+      <origin
+        xyz="-0.00621161774696062 0.00204351624207204 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.5932291666647E-05" />
+      <inertia
+        ixx="3.65100666164903E-11"
+        ixy="-7.66754062161122E-13"
+        ixz="2.33752242609463E-28"
+        iyy="3.81508764807897E-11"
+        iyz="5.63190141638701E-27"
+        izz="8.27639448625056E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r41.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r41.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r41"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs4" />
+    <child
+      link="r41" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r42">
+    <inertial>
+      <origin
+        xyz="-0.00611092708778319 0.00419933857679289 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="1.152994791667E-05" />
+      <inertia
+        ixx="2.64618315913078E-11"
+        ixy="-4.15298069981619E-13"
+        ixz="1.27917020837341E-27"
+        iyy="2.58785618371164E-11"
+        iyz="4.7090820880997E-27"
+        izz="4.29894377563261E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r42.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r42.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r42"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs4" />
+    <child
+      link="r42" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r43">
+    <inertial>
+      <origin
+        xyz="-0.00614266566829566 0.00632986330314659 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="7.12760416665123E-06" />
+      <inertia
+        ixx="1.63479264992618E-11"
+        ixy="-1.0225014848628E-13"
+        ixz="-4.68695323724122E-29"
+        iyy="1.52849552371794E-11"
+        iyz="3.39858922297986E-27"
+        izz="1.934531042061E-12" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r43.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r43.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r43"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs4" />
+    <child
+      link="r43" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="r44">
+    <inertial>
+      <origin
+        xyz="-0.00624183898977324 0.00815314698806176 0.0025"
+        rpy="0 0 0" />
+      <mass
+        value="2.89773207859236E-06" />
+      <inertia
+        ixx="6.3723103245036E-12"
+        ixy="2.90227817683082E-14"
+        ixz="-1.15428620907934E-28"
+        iyy="6.08740596689974E-12"
+        iyz="1.45473671992402E-27"
+        izz="3.85832630601829E-13" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r44.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.384313725490196 0.384313725490196 0.384313725490196 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/r44.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="r44"
+    type="fixed">
+    <origin
+      xyz="0 0 0"
+      rpy="0 0 0" />
+    <parent
+      link="rs4" />
+    <child
+      link="r44" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="rw">
+    <inertial>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <mass
+        value="0" />
+      <inertia
+        ixx="0"
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rw.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://real_car/meshes/rw.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="rw"
+    type="continuous">
+    <origin
+      xyz="0.020089908251347 0 0.0003"
+      rpy="1.5707963267949 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="rw" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+</robot>

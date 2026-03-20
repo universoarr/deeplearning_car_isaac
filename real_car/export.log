@@ -1,0 +1,331 @@
+2026-03-17 22:47:30,366 INFO  AssemblyExportForm.cs: 309 - Saving URDF package to D:\mac\project\deeplearning_car_isaac\real_car
+2026-03-17 22:47:30,367 INFO  ExportHelper.cs: 147 - Beginning the export process
+2026-03-17 22:47:30,368 INFO  ExportHelper.cs: 153 - Creating package directories with name real_car and save path D:\mac\project\deeplearning_car_isaac
+2026-03-17 22:47:31,785 INFO  ExportHelper.cs: 162 - Creating CMakeLists.txt at D:\mac\project\deeplearning_car_isaac\real_car\CMakeLists.txt
+2026-03-17 22:47:31,786 INFO  ExportHelper.cs: 166 - Creating joint names config at D:\mac\project\deeplearning_car_isaac\real_car\config\joint_names_real_car.yaml
+2026-03-17 22:47:31,787 INFO  ExportHelper.cs: 170 - Creating package.xml at D:\mac\project\deeplearning_car_isaac\real_car\package.xml
+2026-03-17 22:47:31,787 INFO  PackageXMLWriter.cs: 21 - Creating package.xml at D:\mac\project\deeplearning_car_isaac\real_car\package.xml
+2026-03-17 22:47:31,789 INFO  ExportHelper.cs: 177 - Creating RVIZ launch file in D:\mac\project\deeplearning_car_isaac\real_car\launch\
+2026-03-17 22:47:31,790 INFO  ExportHelper.cs: 182 - Creating Gazebo launch file in D:\mac\project\deeplearning_car_isaac\real_car\launch\
+2026-03-17 22:47:31,791 INFO  ExportHelper.cs: 187 - Saving existing STL preferences
+2026-03-17 22:47:31,791 INFO  ExportHelper.cs: 450 - Saving users preferences
+2026-03-17 22:47:31,791 INFO  ExportHelper.cs: 190 - Modifying STL preferences
+2026-03-17 22:47:31,792 INFO  ExportHelper.cs: 464 - Setting STL preferences
+2026-03-17 22:47:31,794 INFO  ExportHelper.cs: 196 - Found 0 hidden components 
+2026-03-17 22:47:31,794 INFO  ExportHelper.cs: 197 - Hiding all components
+2026-03-17 22:47:32,027 INFO  ExportHelper.cs: 204 - Beginning individual files export
+2026-03-17 22:47:32,032 INFO  ExportHelper.cs: 270 - Exporting link: base_link
+2026-03-17 22:47:32,033 INFO  ExportHelper.cs: 272 - Link base_link has 3 children
+2026-03-17 22:47:32,035 INFO  ExportHelper.cs: 270 - Exporting link: lb
+2026-03-17 22:47:32,037 INFO  ExportHelper.cs: 272 - Link lb has 4 children
+2026-03-17 22:47:32,040 INFO  ExportHelper.cs: 270 - Exporting link: ls1
+2026-03-17 22:47:32,040 INFO  ExportHelper.cs: 272 - Link ls1 has 4 children
+2026-03-17 22:47:32,041 INFO  ExportHelper.cs: 270 - Exporting link: l11
+2026-03-17 22:47:32,041 INFO  ExportHelper.cs: 272 - Link l11 has 0 children
+2026-03-17 22:47:32,042 INFO  ExportHelper.cs: 317 - l11: Exporting STL with coordinate frame Origin_l11
+2026-03-17 22:47:32,043 INFO  ExportHelper.cs: 322 - l11: Reference geometry name 
+2026-03-17 22:47:32,075 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l11.STL
+2026-03-17 22:47:32,154 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,155 INFO  ExportHelper.cs: 270 - Exporting link: l12
+2026-03-17 22:47:32,155 INFO  ExportHelper.cs: 272 - Link l12 has 0 children
+2026-03-17 22:47:32,155 INFO  ExportHelper.cs: 317 - l12: Exporting STL with coordinate frame Origin_l12
+2026-03-17 22:47:32,155 INFO  ExportHelper.cs: 322 - l12: Reference geometry name 
+2026-03-17 22:47:32,162 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l12.STL
+2026-03-17 22:47:32,184 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,185 INFO  ExportHelper.cs: 270 - Exporting link: l13
+2026-03-17 22:47:32,185 INFO  ExportHelper.cs: 272 - Link l13 has 0 children
+2026-03-17 22:47:32,185 INFO  ExportHelper.cs: 317 - l13: Exporting STL with coordinate frame Origin_l13
+2026-03-17 22:47:32,186 INFO  ExportHelper.cs: 322 - l13: Reference geometry name 
+2026-03-17 22:47:32,193 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l13.STL
+2026-03-17 22:47:32,215 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,216 INFO  ExportHelper.cs: 270 - Exporting link: l14
+2026-03-17 22:47:32,216 INFO  ExportHelper.cs: 272 - Link l14 has 0 children
+2026-03-17 22:47:32,216 INFO  ExportHelper.cs: 317 - l14: Exporting STL with coordinate frame Origin_l14
+2026-03-17 22:47:32,217 INFO  ExportHelper.cs: 322 - l14: Reference geometry name 
+2026-03-17 22:47:32,224 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l14.STL
+2026-03-17 22:47:32,247 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,249 INFO  ExportHelper.cs: 317 - ls1: Exporting STL with coordinate frame Origin_ls1
+2026-03-17 22:47:32,249 INFO  ExportHelper.cs: 322 - ls1: Reference geometry name 
+2026-03-17 22:47:32,256 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\ls1.STL
+2026-03-17 22:47:32,279 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,279 INFO  ExportHelper.cs: 270 - Exporting link: ls2
+2026-03-17 22:47:32,280 INFO  ExportHelper.cs: 272 - Link ls2 has 4 children
+2026-03-17 22:47:32,280 INFO  ExportHelper.cs: 270 - Exporting link: l21
+2026-03-17 22:47:32,280 INFO  ExportHelper.cs: 272 - Link l21 has 0 children
+2026-03-17 22:47:32,280 INFO  ExportHelper.cs: 317 - l21: Exporting STL with coordinate frame Origin_l21
+2026-03-17 22:47:32,281 INFO  ExportHelper.cs: 322 - l21: Reference geometry name 
+2026-03-17 22:47:32,288 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l21.STL
+2026-03-17 22:47:32,309 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,311 INFO  ExportHelper.cs: 270 - Exporting link: l22
+2026-03-17 22:47:32,312 INFO  ExportHelper.cs: 272 - Link l22 has 0 children
+2026-03-17 22:47:32,312 INFO  ExportHelper.cs: 317 - l22: Exporting STL with coordinate frame Origin_l22
+2026-03-17 22:47:32,312 INFO  ExportHelper.cs: 322 - l22: Reference geometry name 
+2026-03-17 22:47:32,320 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l22.STL
+2026-03-17 22:47:32,341 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,342 INFO  ExportHelper.cs: 270 - Exporting link: l23
+2026-03-17 22:47:32,343 INFO  ExportHelper.cs: 272 - Link l23 has 0 children
+2026-03-17 22:47:32,343 INFO  ExportHelper.cs: 317 - l23: Exporting STL with coordinate frame Origin_l23
+2026-03-17 22:47:32,343 INFO  ExportHelper.cs: 322 - l23: Reference geometry name 
+2026-03-17 22:47:32,350 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l23.STL
+2026-03-17 22:47:32,375 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,376 INFO  ExportHelper.cs: 270 - Exporting link: l24
+2026-03-17 22:47:32,376 INFO  ExportHelper.cs: 272 - Link l24 has 0 children
+2026-03-17 22:47:32,376 INFO  ExportHelper.cs: 317 - l24: Exporting STL with coordinate frame Origin_l24
+2026-03-17 22:47:32,376 INFO  ExportHelper.cs: 322 - l24: Reference geometry name 
+2026-03-17 22:47:32,384 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l24.STL
+2026-03-17 22:47:32,406 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,407 INFO  ExportHelper.cs: 317 - ls2: Exporting STL with coordinate frame Origin_ls2
+2026-03-17 22:47:32,407 INFO  ExportHelper.cs: 322 - ls2: Reference geometry name 
+2026-03-17 22:47:32,415 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\ls2.STL
+2026-03-17 22:47:32,439 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,439 INFO  ExportHelper.cs: 270 - Exporting link: ls3
+2026-03-17 22:47:32,441 INFO  ExportHelper.cs: 272 - Link ls3 has 4 children
+2026-03-17 22:47:32,441 INFO  ExportHelper.cs: 270 - Exporting link: l31
+2026-03-17 22:47:32,441 INFO  ExportHelper.cs: 272 - Link l31 has 0 children
+2026-03-17 22:47:32,441 INFO  ExportHelper.cs: 317 - l31: Exporting STL with coordinate frame Origin_l31
+2026-03-17 22:47:32,441 INFO  ExportHelper.cs: 322 - l31: Reference geometry name 
+2026-03-17 22:47:32,450 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l31.STL
+2026-03-17 22:47:32,470 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,471 INFO  ExportHelper.cs: 270 - Exporting link: l32
+2026-03-17 22:47:32,471 INFO  ExportHelper.cs: 272 - Link l32 has 0 children
+2026-03-17 22:47:32,472 INFO  ExportHelper.cs: 317 - l32: Exporting STL with coordinate frame Origin_l32
+2026-03-17 22:47:32,472 INFO  ExportHelper.cs: 322 - l32: Reference geometry name 
+2026-03-17 22:47:32,480 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l32.STL
+2026-03-17 22:47:32,502 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,502 INFO  ExportHelper.cs: 270 - Exporting link: l33
+2026-03-17 22:47:32,503 INFO  ExportHelper.cs: 272 - Link l33 has 0 children
+2026-03-17 22:47:32,503 INFO  ExportHelper.cs: 317 - l33: Exporting STL with coordinate frame Origin_l33
+2026-03-17 22:47:32,503 INFO  ExportHelper.cs: 322 - l33: Reference geometry name 
+2026-03-17 22:47:32,511 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l33.STL
+2026-03-17 22:47:32,532 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,535 INFO  ExportHelper.cs: 270 - Exporting link: l34
+2026-03-17 22:47:32,535 INFO  ExportHelper.cs: 272 - Link l34 has 0 children
+2026-03-17 22:47:32,536 INFO  ExportHelper.cs: 317 - l34: Exporting STL with coordinate frame Origin_l34
+2026-03-17 22:47:32,536 INFO  ExportHelper.cs: 322 - l34: Reference geometry name 
+2026-03-17 22:47:32,555 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l34.STL
+2026-03-17 22:47:32,576 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,577 INFO  ExportHelper.cs: 317 - ls3: Exporting STL with coordinate frame Origin_ls3
+2026-03-17 22:47:32,577 INFO  ExportHelper.cs: 322 - ls3: Reference geometry name 
+2026-03-17 22:47:32,585 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\ls3.STL
+2026-03-17 22:47:32,608 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,609 INFO  ExportHelper.cs: 270 - Exporting link: ls4
+2026-03-17 22:47:32,609 INFO  ExportHelper.cs: 272 - Link ls4 has 4 children
+2026-03-17 22:47:32,609 INFO  ExportHelper.cs: 270 - Exporting link: l41
+2026-03-17 22:47:32,610 INFO  ExportHelper.cs: 272 - Link l41 has 0 children
+2026-03-17 22:47:32,610 INFO  ExportHelper.cs: 317 - l41: Exporting STL with coordinate frame Origin_l41
+2026-03-17 22:47:32,610 INFO  ExportHelper.cs: 322 - l41: Reference geometry name 
+2026-03-17 22:47:32,618 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l41.STL
+2026-03-17 22:47:32,638 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,638 INFO  ExportHelper.cs: 270 - Exporting link: l42
+2026-03-17 22:47:32,640 INFO  ExportHelper.cs: 272 - Link l42 has 0 children
+2026-03-17 22:47:32,640 INFO  ExportHelper.cs: 317 - l42: Exporting STL with coordinate frame Origin_l42
+2026-03-17 22:47:32,640 INFO  ExportHelper.cs: 322 - l42: Reference geometry name 
+2026-03-17 22:47:32,647 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l42.STL
+2026-03-17 22:47:32,669 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,669 INFO  ExportHelper.cs: 270 - Exporting link: l43
+2026-03-17 22:47:32,670 INFO  ExportHelper.cs: 272 - Link l43 has 0 children
+2026-03-17 22:47:32,670 INFO  ExportHelper.cs: 317 - l43: Exporting STL with coordinate frame Origin_l43
+2026-03-17 22:47:32,670 INFO  ExportHelper.cs: 322 - l43: Reference geometry name 
+2026-03-17 22:47:32,677 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l43.STL
+2026-03-17 22:47:32,697 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,698 INFO  ExportHelper.cs: 270 - Exporting link: l44
+2026-03-17 22:47:32,698 INFO  ExportHelper.cs: 272 - Link l44 has 0 children
+2026-03-17 22:47:32,698 INFO  ExportHelper.cs: 317 - l44: Exporting STL with coordinate frame Origin_l44
+2026-03-17 22:47:32,698 INFO  ExportHelper.cs: 322 - l44: Reference geometry name 
+2026-03-17 22:47:32,706 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\l44.STL
+2026-03-17 22:47:32,727 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,728 INFO  ExportHelper.cs: 317 - ls4: Exporting STL with coordinate frame Origin_ls4
+2026-03-17 22:47:32,728 INFO  ExportHelper.cs: 322 - ls4: Reference geometry name 
+2026-03-17 22:47:32,736 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\ls4.STL
+2026-03-17 22:47:32,756 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,758 INFO  ExportHelper.cs: 317 - lb: Exporting STL with coordinate frame Origin_lb
+2026-03-17 22:47:32,758 INFO  ExportHelper.cs: 322 - lb: Reference geometry name 
+2026-03-17 22:47:32,766 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\lb.STL
+2026-03-17 22:47:32,792 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,792 INFO  ExportHelper.cs: 270 - Exporting link: rb
+2026-03-17 22:47:32,793 INFO  ExportHelper.cs: 272 - Link rb has 4 children
+2026-03-17 22:47:32,793 INFO  ExportHelper.cs: 270 - Exporting link: rs1
+2026-03-17 22:47:32,793 INFO  ExportHelper.cs: 272 - Link rs1 has 4 children
+2026-03-17 22:47:32,794 INFO  ExportHelper.cs: 270 - Exporting link: r11
+2026-03-17 22:47:32,794 INFO  ExportHelper.cs: 272 - Link r11 has 0 children
+2026-03-17 22:47:32,794 INFO  ExportHelper.cs: 317 - r11: Exporting STL with coordinate frame Origin_r11
+2026-03-17 22:47:32,794 INFO  ExportHelper.cs: 322 - r11: Reference geometry name 
+2026-03-17 22:47:32,803 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r11.STL
+2026-03-17 22:47:32,824 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,825 INFO  ExportHelper.cs: 270 - Exporting link: r12
+2026-03-17 22:47:32,825 INFO  ExportHelper.cs: 272 - Link r12 has 0 children
+2026-03-17 22:47:32,825 INFO  ExportHelper.cs: 317 - r12: Exporting STL with coordinate frame Origin_r12
+2026-03-17 22:47:32,826 INFO  ExportHelper.cs: 322 - r12: Reference geometry name 
+2026-03-17 22:47:32,833 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r12.STL
+2026-03-17 22:47:32,855 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,856 INFO  ExportHelper.cs: 270 - Exporting link: r13
+2026-03-17 22:47:32,856 INFO  ExportHelper.cs: 272 - Link r13 has 0 children
+2026-03-17 22:47:32,857 INFO  ExportHelper.cs: 317 - r13: Exporting STL with coordinate frame Origin_r13
+2026-03-17 22:47:32,857 INFO  ExportHelper.cs: 322 - r13: Reference geometry name 
+2026-03-17 22:47:32,864 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r13.STL
+2026-03-17 22:47:32,885 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,885 INFO  ExportHelper.cs: 270 - Exporting link: r14
+2026-03-17 22:47:32,886 INFO  ExportHelper.cs: 272 - Link r14 has 0 children
+2026-03-17 22:47:32,886 INFO  ExportHelper.cs: 317 - r14: Exporting STL with coordinate frame Origin_r14
+2026-03-17 22:47:32,886 INFO  ExportHelper.cs: 322 - r14: Reference geometry name 
+2026-03-17 22:47:32,894 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r14.STL
+2026-03-17 22:47:32,914 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,914 INFO  ExportHelper.cs: 317 - rs1: Exporting STL with coordinate frame Origin_rs1
+2026-03-17 22:47:32,914 INFO  ExportHelper.cs: 322 - rs1: Reference geometry name 
+2026-03-17 22:47:32,922 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\rs1.STL
+2026-03-17 22:47:32,945 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,946 INFO  ExportHelper.cs: 270 - Exporting link: rs2
+2026-03-17 22:47:32,946 INFO  ExportHelper.cs: 272 - Link rs2 has 4 children
+2026-03-17 22:47:32,946 INFO  ExportHelper.cs: 270 - Exporting link: r21
+2026-03-17 22:47:32,947 INFO  ExportHelper.cs: 272 - Link r21 has 0 children
+2026-03-17 22:47:32,947 INFO  ExportHelper.cs: 317 - r21: Exporting STL with coordinate frame Origin_r21
+2026-03-17 22:47:32,947 INFO  ExportHelper.cs: 322 - r21: Reference geometry name 
+2026-03-17 22:47:32,954 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r21.STL
+2026-03-17 22:47:32,974 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:32,974 INFO  ExportHelper.cs: 270 - Exporting link: r22
+2026-03-17 22:47:32,976 INFO  ExportHelper.cs: 272 - Link r22 has 0 children
+2026-03-17 22:47:32,976 INFO  ExportHelper.cs: 317 - r22: Exporting STL with coordinate frame Origin_r22
+2026-03-17 22:47:32,976 INFO  ExportHelper.cs: 322 - r22: Reference geometry name 
+2026-03-17 22:47:32,983 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r22.STL
+2026-03-17 22:47:33,003 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,003 INFO  ExportHelper.cs: 270 - Exporting link: r23
+2026-03-17 22:47:33,004 INFO  ExportHelper.cs: 272 - Link r23 has 0 children
+2026-03-17 22:47:33,004 INFO  ExportHelper.cs: 317 - r23: Exporting STL with coordinate frame Origin_r23
+2026-03-17 22:47:33,004 INFO  ExportHelper.cs: 322 - r23: Reference geometry name 
+2026-03-17 22:47:33,012 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r23.STL
+2026-03-17 22:47:33,033 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,034 INFO  ExportHelper.cs: 270 - Exporting link: r24
+2026-03-17 22:47:33,034 INFO  ExportHelper.cs: 272 - Link r24 has 0 children
+2026-03-17 22:47:33,035 INFO  ExportHelper.cs: 317 - r24: Exporting STL with coordinate frame Origin_r24
+2026-03-17 22:47:33,035 INFO  ExportHelper.cs: 322 - r24: Reference geometry name 
+2026-03-17 22:47:33,042 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r24.STL
+2026-03-17 22:47:33,062 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,062 INFO  ExportHelper.cs: 317 - rs2: Exporting STL with coordinate frame Origin_rs2
+2026-03-17 22:47:33,062 INFO  ExportHelper.cs: 322 - rs2: Reference geometry name 
+2026-03-17 22:47:33,070 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\rs2.STL
+2026-03-17 22:47:33,091 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,092 INFO  ExportHelper.cs: 270 - Exporting link: rs3
+2026-03-17 22:47:33,092 INFO  ExportHelper.cs: 272 - Link rs3 has 4 children
+2026-03-17 22:47:33,094 INFO  ExportHelper.cs: 270 - Exporting link: r31
+2026-03-17 22:47:33,094 INFO  ExportHelper.cs: 272 - Link r31 has 0 children
+2026-03-17 22:47:33,094 INFO  ExportHelper.cs: 317 - r31: Exporting STL with coordinate frame Origin_r31
+2026-03-17 22:47:33,094 INFO  ExportHelper.cs: 322 - r31: Reference geometry name 
+2026-03-17 22:47:33,101 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r31.STL
+2026-03-17 22:47:33,121 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,122 INFO  ExportHelper.cs: 270 - Exporting link: r32
+2026-03-17 22:47:33,122 INFO  ExportHelper.cs: 272 - Link r32 has 0 children
+2026-03-17 22:47:33,122 INFO  ExportHelper.cs: 317 - r32: Exporting STL with coordinate frame Origin_r32
+2026-03-17 22:47:33,122 INFO  ExportHelper.cs: 322 - r32: Reference geometry name 
+2026-03-17 22:47:33,129 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r32.STL
+2026-03-17 22:47:33,150 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,151 INFO  ExportHelper.cs: 270 - Exporting link: r33
+2026-03-17 22:47:33,151 INFO  ExportHelper.cs: 272 - Link r33 has 0 children
+2026-03-17 22:47:33,151 INFO  ExportHelper.cs: 317 - r33: Exporting STL with coordinate frame Origin_r33
+2026-03-17 22:47:33,152 INFO  ExportHelper.cs: 322 - r33: Reference geometry name 
+2026-03-17 22:47:33,159 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r33.STL
+2026-03-17 22:47:33,179 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,180 INFO  ExportHelper.cs: 270 - Exporting link: r34
+2026-03-17 22:47:33,180 INFO  ExportHelper.cs: 272 - Link r34 has 0 children
+2026-03-17 22:47:33,180 INFO  ExportHelper.cs: 317 - r34: Exporting STL with coordinate frame Origin_r34
+2026-03-17 22:47:33,180 INFO  ExportHelper.cs: 322 - r34: Reference geometry name 
+2026-03-17 22:47:33,188 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r34.STL
+2026-03-17 22:47:33,209 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,209 INFO  ExportHelper.cs: 317 - rs3: Exporting STL with coordinate frame Origin_rs3
+2026-03-17 22:47:33,209 INFO  ExportHelper.cs: 322 - rs3: Reference geometry name 
+2026-03-17 22:47:33,216 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\rs3.STL
+2026-03-17 22:47:33,238 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,239 INFO  ExportHelper.cs: 270 - Exporting link: rs4
+2026-03-17 22:47:33,239 INFO  ExportHelper.cs: 272 - Link rs4 has 4 children
+2026-03-17 22:47:33,239 INFO  ExportHelper.cs: 270 - Exporting link: r41
+2026-03-17 22:47:33,240 INFO  ExportHelper.cs: 272 - Link r41 has 0 children
+2026-03-17 22:47:33,240 INFO  ExportHelper.cs: 317 - r41: Exporting STL with coordinate frame Origin_r41
+2026-03-17 22:47:33,240 INFO  ExportHelper.cs: 322 - r41: Reference geometry name 
+2026-03-17 22:47:33,247 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r41.STL
+2026-03-17 22:47:33,267 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,268 INFO  ExportHelper.cs: 270 - Exporting link: r42
+2026-03-17 22:47:33,268 INFO  ExportHelper.cs: 272 - Link r42 has 0 children
+2026-03-17 22:47:33,268 INFO  ExportHelper.cs: 317 - r42: Exporting STL with coordinate frame Origin_r42
+2026-03-17 22:47:33,271 INFO  ExportHelper.cs: 322 - r42: Reference geometry name 
+2026-03-17 22:47:33,291 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r42.STL
+2026-03-17 22:47:33,312 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,313 INFO  ExportHelper.cs: 270 - Exporting link: r43
+2026-03-17 22:47:33,314 INFO  ExportHelper.cs: 272 - Link r43 has 0 children
+2026-03-17 22:47:33,314 INFO  ExportHelper.cs: 317 - r43: Exporting STL with coordinate frame Origin_r43
+2026-03-17 22:47:33,314 INFO  ExportHelper.cs: 322 - r43: Reference geometry name 
+2026-03-17 22:47:33,322 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r43.STL
+2026-03-17 22:47:33,345 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,346 INFO  ExportHelper.cs: 270 - Exporting link: r44
+2026-03-17 22:47:33,346 INFO  ExportHelper.cs: 272 - Link r44 has 0 children
+2026-03-17 22:47:33,347 INFO  ExportHelper.cs: 317 - r44: Exporting STL with coordinate frame Origin_r44
+2026-03-17 22:47:33,347 INFO  ExportHelper.cs: 322 - r44: Reference geometry name 
+2026-03-17 22:47:33,354 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\r44.STL
+2026-03-17 22:47:33,374 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,374 INFO  ExportHelper.cs: 317 - rs4: Exporting STL with coordinate frame Origin_rs4
+2026-03-17 22:47:33,375 INFO  ExportHelper.cs: 322 - rs4: Reference geometry name 
+2026-03-17 22:47:33,383 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\rs4.STL
+2026-03-17 22:47:33,404 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,404 INFO  ExportHelper.cs: 317 - rb: Exporting STL with coordinate frame Origin_rb
+2026-03-17 22:47:33,405 INFO  ExportHelper.cs: 322 - rb: Reference geometry name 
+2026-03-17 22:47:33,412 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\rb.STL
+2026-03-17 22:47:33,439 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,439 INFO  ExportHelper.cs: 270 - Exporting link: rw
+2026-03-17 22:47:33,440 INFO  ExportHelper.cs: 272 - Link rw has 0 children
+2026-03-17 22:47:33,440 INFO  ExportHelper.cs: 317 - rw: Exporting STL with coordinate frame Origin_rw
+2026-03-17 22:47:33,440 INFO  ExportHelper.cs: 322 - rw: Reference geometry name 
+2026-03-17 22:47:33,447 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\rw.STL
+2026-03-17 22:47:33,464 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,464 INFO  ExportHelper.cs: 317 - base_link: Exporting STL with coordinate frame Origin_global
+2026-03-17 22:47:33,465 INFO  ExportHelper.cs: 322 - base_link: Reference geometry name 
+2026-03-17 22:47:33,475 INFO  ExportHelper.cs: 330 - Saving STL to D:\mac\project\deeplearning_car_isaac\real_car\meshes\base_link.STL
+2026-03-17 22:47:33,498 INFO  ExportHelper.cs: 405 - Removing SW header in STL file
+2026-03-17 22:47:33,499 INFO  ExportHelper.cs: 145 - Showing all components except previously hidden components
+2026-03-17 22:47:33,643 INFO  ExportHelper.cs: 145 - Resetting STL preferences
+2026-03-17 22:47:33,644 INFO  ExportHelper.cs: 478 - Returning STL preferences to user preferences
+2026-03-17 22:47:33,644 INFO  ExportHelper.cs: 228 - Writing URDF file to D:\mac\project\deeplearning_car_isaac\real_car\urdf\real_car.urdf
+2026-03-17 22:47:33,702 INFO  CSVImportExport.cs: 32 - Writing CSV file D:\mac\project\deeplearning_car_isaac\real_car\urdf\real_car.csv
+2026-03-17 22:47:33,715 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,715 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,715 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,716 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,716 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,716 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,716 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,716 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,717 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,717 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,717 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,718 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,718 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,718 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,718 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,719 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,719 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,719 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,719 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,719 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,720 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,720 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,720 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,720 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,720 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,721 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,721 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,721 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,721 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,721 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,722 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,722 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,722 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,722 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,723 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,723 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,723 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,723 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,723 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,724 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,724 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,724 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,724 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,724 ERROR CSVImportExport.cs: 130 - The following columns were not written to the CSV: Link.Joint.ChildLink.link,
+2026-03-17 22:47:33,725 INFO  ExportHelper.cs: 234 - Copying log file
+2026-03-17 22:47:33,726 INFO  ExportHelper.cs: 439 - Copying C:\Users\universoar\sw2urdf_logs\sw2urdf.log to D:\mac\project\deeplearning_car_isaac\real_car\export.log
