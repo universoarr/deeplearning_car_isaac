@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="585eb7fd-bb11-499b-b426-029ae0538a13" name="更改" comment="1">
+      <change afterPath="$PROJECT_DIR$/.idea/easycode.ignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/deeplearning_car_isaac.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apply_materials.py" beforeDir="false" afterPath="$PROJECT_DIR$/apply_materials.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apply_materials_2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apply_materials_3.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apply_materials_4.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/apply_materials_5.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/car_claw.urdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/car_claw.usd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/convert.py" beforeDir="false" afterPath="$PROJECT_DIR$/convert.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/convert_real_car.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/isaac_car_env.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/real_car_sim.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run.py" beforeDir="false" afterPath="$PROJECT_DIR$/run.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/usd/1.usd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/usd/SoftRubber.usd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/usd/ls1.usd" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/usd/real_car_soft.usd" beforeDir="false" afterPath="$PROJECT_DIR$/usd/real_car_soft.usd" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="260" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;universoarr&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/universoarr/deeplearning_car_isaac.git&quot;,
+    &quot;accountId&quot;: &quot;7e773367-7671-4e00-9778-29fbcda8fd6c&quot;
+  }
+}</component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
+  <component name="ProjectId" id="3AnJjGvaX1fdcbEEOnFWj1aJHDR" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Python 测试.Python 测试 (runrs.py 内).executor": "Run",
+    "Python 测试.Python 测试 (test.py 内).executor": "Run",
+    "Python 测试.Python 测试 (test_drive.py 内).executor": "Run",
+    "Python.DeformableBodyAttachmentsDemo.executor": "Run",
+    "Python.apply_materials.executor": "Run",
+    "Python.apply_materials_2.executor": "Run",
+    "Python.apply_materials_3.executor": "Run",
+    "Python.apply_materials_4.executor": "Run",
+    "Python.apply_materials_5.executor": "Run",
+    "Python.convert.executor": "Run",
+    "Python.convert_real_car.executor": "Run",
+    "Python.environment.executor": "Run",
+    "Python.fromstl.executor": "Run",
+    "Python.isaac_car_env.executor": "Run",
+    "Python.open_ui.executor": "Run",
+    "Python.run.executor": "Run",
+    "Python.run_car.executor": "Run",
+    "Python.run_deformable_object.executor": "Run",
+    "Python.runrs.executor": "Run",
+    "Python.simulation_app.executor": "Debug",
+    "Python.test.executor": "Run",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "D:/mac/project/deeplearning_car_isaac",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\mac\project\deeplearning_car_isaac" />
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-e768b9ed790e-JavaScript-PY-243.21565.199" />
+        <option value="bundled-python-sdk-cab1f2013843-4ae2d6a61b08-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-243.21565.199" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="585eb7fd-bb11-499b-b426-029ae0538a13" name="更改" comment="" />
+      <created>1773222534317</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1773222534317</updated>
+      <workItem from="1773222535361" duration="9430000" />
+      <workItem from="1773240897418" duration="6277000" />
+      <workItem from="1773379229640" duration="3995000" />
+      <workItem from="1773384216643" duration="2000" />
+      <workItem from="1773384247450" duration="1939000" />
+      <workItem from="1773387209463" duration="1216000" />
+      <workItem from="1773388452110" duration="152000" />
+      <workItem from="1773388613625" duration="1644000" />
+      <workItem from="1773390289592" duration="469000" />
+      <workItem from="1773390779375" duration="325000" />
+      <workItem from="1773391116017" duration="6423000" />
+      <workItem from="1773398117795" duration="12611000" />
+      <workItem from="1773488718323" duration="9000" />
+      <workItem from="1773488779654" duration="3368000" />
+      <workItem from="1773492533379" duration="1368000" />
+      <workItem from="1773493965776" duration="6616000" />
+      <workItem from="1773654576152" duration="10406000" />
+      <workItem from="1773680047062" duration="310000" />
+      <workItem from="1773730156552" duration="9879000" />
+      <workItem from="1773792882845" duration="4068000" />
+      <workItem from="1773977789103" duration="1961000" />
+      <workItem from="1773983750679" duration="1054000" />
+      <workItem from="1773985034380" duration="39000" />
+      <workItem from="1773985548218" duration="84000" />
+    </task>
+    <task id="LOCAL-00001" summary="1">
+      <option name="closed" value="true" />
+      <created>1773979495971</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1773979495971</updated>
+    </task>
+    <task id="LOCAL-00002" summary="1">
+      <option name="closed" value="true" />
+      <created>1773983872334</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1773983872335</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="FILTERS">
+                <map>
+                  <entry key="branch">
+                    <value>
+                      <list>
+                        <option value="main" />
+                      </list>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <ignored-roots>
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
+    <MESSAGE value="1" />
+    <option name="LAST_COMMIT_MESSAGE" value="1" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$environment.coverage" NAME="environment 覆盖结果" MODIFIED="1773762924950" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$open_ui.coverage" NAME="open_ui 覆盖结果" MODIFIED="1773763172298" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$test.coverage" NAME="test 覆盖结果" MODIFIED="1773396670892" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$apply_materials_4.coverage" NAME="apply_materials_4 覆盖结果" MODIFIED="1773761126892" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$convert.coverage" NAME="convert 覆盖结果" MODIFIED="1773409036808" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$run_deformable_object.coverage" NAME="run_deformable_object 覆盖结果" MODIFIED="1773763074897" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/IsaacLab/scripts/tutorials/01_assets" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$DeformableBodyAttachmentsDemo.coverage" NAME="DeformableBodyAttachmentsDemo 覆盖结果" MODIFIED="1773986256358" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../Anaconda_envs/envs/isaaclab/Lib/site-packages/isaacsim/extsPhysics/omni.physx.demos/omni/physxdemos/scenes" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$isaac_car_env.coverage" NAME="isaac_car_env 覆盖结果" MODIFIED="1773404931708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$run_car.coverage" NAME="run_car 覆盖结果" MODIFIED="1773743795902" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$apply_materials_5.coverage" NAME="apply_materials_5 覆盖结果" MODIFIED="1773987441684" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$simulation_app.coverage" NAME="simulation_app 覆盖结果" MODIFIED="1773384106742" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../Anaconda_envs/envs/isaaclab/Lib/site-packages/isaacsim/exts/isaacsim.simulation_app/isaacsim/simulation_app" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$apply_materials_2.coverage" NAME="apply_materials_2 覆盖结果" MODIFIED="1773587058645" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$convert_real_car.coverage" NAME="convert_real_car 覆盖结果" MODIFIED="1773758866649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$fromstl.coverage" NAME="fromstl 覆盖结果" MODIFIED="1774007863944" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$runrs.coverage" NAME="runrs 覆盖结果" MODIFIED="1773744128543" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$run.coverage" NAME="run 覆盖结果" MODIFIED="1774083615402" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$apply_materials_3.coverage" NAME="apply_materials_3 覆盖结果" MODIFIED="1773668587576" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$apply_materials.coverage" NAME="apply_materials 覆盖结果" MODIFIED="1773511698712" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/deeplearning_car_isaac$.coverage" NAME=" 覆盖结果" MODIFIED="1773676789352" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>

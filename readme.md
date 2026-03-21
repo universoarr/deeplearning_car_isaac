@@ -1,1 +1,6 @@
-3
+项目流程
+real_car中有urdf格式的小车
+通过convert将urdf转换为usd并放入usd文件夹
+通过apply_meterials将usd文件转化为soft
+environment是isaaclab基础环境配置
+run是基础调试

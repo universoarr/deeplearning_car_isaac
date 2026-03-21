@@ -18,9 +18,9 @@ def main():
     )
 
     # 4. 加载你的小车
-    # car_path = "/World/Car"
-    # usd_path = r"D:\mac\project\deeplearning_car_isaac\usd\real_car_soft.usd"
-    # prim_utils.create_prim(car_path, usd_path=usd_path, translation=np.array([0, 0, 0.03]))
+    car_path = "/World/Car"
+    usd_path = r"D:\mac\project\deeplearning_car_isaac\usd\real_car_soft.usd"
+    prim_utils.create_prim(car_path, usd_path=usd_path, translation=np.array([0, 0, 0.03]))
 
     # 等待小车加载
     for _ in range(60):
