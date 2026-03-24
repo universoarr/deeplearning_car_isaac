@@ -13,14 +13,14 @@ def main():
     # 3. 一键初始化环境（灯光、地面、物理）
     stage = setup_isaac_world(
         simulation_app,
-        camera_pos=[-0.3, -0.3, 0.3],
-        camera_target=[0, 0, 0.03]
+        camera_pos=[-30, -30, 30],
+        camera_target=[0, 0, 3]
     )
 
     # 4. 加载你的小车
     car_path = "/World/Car"
     usd_path = r"D:\mac\project\deeplearning_car_isaac\usd\real_car_soft.usd"
-    prim_utils.create_prim(car_path, usd_path=usd_path, translation=np.array([0, 0, 0.03]))
+    prim_utils.create_prim(car_path, usd_path=usd_path, translation=np.array([0, 0, 3]))
 
     # 等待小车加载
     for _ in range(60):

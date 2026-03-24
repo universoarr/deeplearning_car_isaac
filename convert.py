@@ -30,17 +30,17 @@ def main():
     root = os.path.dirname(input_urdf)
     name = os.path.basename(input_urdf)
 
-    print(f"⏳ 正在解析 URDF: {name} ...")
+    print(f"[INFO] 正在解析 URDF: {name} ...")
     robot = interface.parse_urdf(root, name, config)
 
     # 导出 USD 文件
-    print(f"⏳ 正在写入 USD 文件 ...")
+    print(f"[INFO] 正在写入 USD 文件 ...")
     result = interface.import_robot(root, name, robot, config, output_usd)
 
     if result:
-        print(f"🎉 转换成功! 请去这里查看: {output_usd}")
+        print(f"[SUCCESS] 转换成功! 请去这里查看: {output_usd}")
     else:
-        print("❌ 转换失败，请检查 meshes 文件夹是否和 urdf 在同一目录下。")
+        print("转换失败，请检查 meshes 文件夹是否和 urdf 在同一目录下。")
 
 
 if __name__ == "__main__":
