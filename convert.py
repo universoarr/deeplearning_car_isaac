@@ -19,12 +19,10 @@ def main():
     config = _urdf.ImportConfig()
 
     # --- 4. 核心导入配置 ---
-    config.merge_fixed_joints = False  # 保留 32个硬块与软条 的独立性，否则无法位移
-    config.fix_base = False  # 取消固定基座
+    config.merge_fixed_joints = False
+    config.fix_base = False
     config.make_default_prim = True
-
-    # 这个选项会转成碰撞计算极快的凸包(Convex Hull)
-    config.convex_decomp = True
+    config.convex_decomp = False
 
     # 标准三参数解析
     root = os.path.dirname(input_urdf)
@@ -40,7 +38,7 @@ def main():
     if result:
         print(f"[SUCCESS] 转换成功! 请去这里查看: {output_usd}")
     else:
-        print("转换失败，请检查 meshes 文件夹是否和 urdf 在同一目录下。")
+        print("转换失败，请检查 URDF 配置。")
 
 
 if __name__ == "__main__":

@@ -44,14 +44,14 @@ def auto_surgery_and_glue(usd_path):
     soft_mat = PhysxSchema.PhysxDeformableBodyMaterialAPI.Apply(stage.GetPrimAtPath(soft_mat_path))
     soft_mat.GetYoungsModulusAttr().Set(536000)
     soft_mat.GetPoissonsRatioAttr().Set(0.45)
-    # soft_mat.CreateDensityAttr().Set(1030.0)
+    soft_mat.CreateDensityAttr().Set(1030.0)
 
     hard_mat_path = f"{material_scope}/HardRubber"
     stage.DefinePrim(hard_mat_path, "Material")
     hard_mat = PhysxSchema.PhysxDeformableBodyMaterialAPI.Apply(stage.GetPrimAtPath(hard_mat_path))
     hard_mat.GetYoungsModulusAttr().Set(1362000000)
     hard_mat.GetPoissonsRatioAttr().Set(0.2)
-    # hard_mat.CreateDensityAttr().Set(1150.0)
+    hard_mat.CreateDensityAttr().Set(1150.0)
 
     soft_mat_obj = UsdShade.Material(stage.GetPrimAtPath(soft_mat_path))
     hard_mat_obj = UsdShade.Material(stage.GetPrimAtPath(hard_mat_path))
