@@ -1,4 +1,4 @@
-﻿from isaacsim import SimulationApp
+from isaacsim import SimulationApp
 
 from envs.base_car_env import CarEnvCfg
 from envs.real_car_env import RealCarEnv
@@ -34,7 +34,7 @@ if gym is not None:
 
         def reset(self, *, seed=None, options=None):
             super().reset(seed=seed)
-            return self._env.reset()
+            return self._env.reset(seed=seed)
 
         def step(self, action):
             return self._env.step(action)

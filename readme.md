@@ -1,12 +1,11 @@
-﻿项目流程
-simple_car中有简化版圆柱轮小车urdf
+项目流程
 前轮lb、rb是驱动轮
 后轮rw是自由轮
-通过convert将simple_car的urdf转换为usd并放入usd文件夹
+当前训练目标为real_car_rigid_sdf.usd
 environment是isaaclab基础环境配置
 run是基础调试
-envs/simple_car_env.py是最小训练环境骨架
-train/train_simple_car.py是训练环境连通性测试入口
+envs/real_car_env.py是训练环境骨架
+train/train_real_car.py是训练环境连通性测试入口
 
 动作接口约定
 当前统一采用两轮PWM控制
@@ -23,5 +22,3 @@ train/train_simple_car.py是训练环境连通性测试入口
 软体在小尺度下乱跳（已解决/放大50倍）
 
 * 软体过软（1 铰链/2杨氏模量剪切模量）
-
-

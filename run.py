@@ -12,7 +12,7 @@ from car_pwm_control import DEFAULT_PWM_CONTROLLER
 from environment import create_rigid_physics_material, setup_isaac_world
 
 
-USD_PATH = r"D:\mac\project\deeplearning_car_isaac\usd\real_car_rigid_sdf.usd"
+USD_PATH = r"D:\mac\project\deeplearning_car_isaac\usd\real_car_rigid_sdf.usd" #_rigid_sdf
 CAR_PATH = "/World/Car"
 JOINTS_PATH = f"{CAR_PATH}/joints"
 DRIVE_SPEED_SCALE = 3.0
@@ -76,12 +76,12 @@ def set_drive_pwm(left_drive_api, right_drive_api, left_pwm: float, right_pwm: f
 
 def run_demo(left_drive_api, right_drive_api):
     phases = (
-        ("idle", 120, 0, 0),
-        ("forward", 240, 220, 220),
-        ("turn_left", 180, 170, 240),
-        ("turn_right", 180, 240, 170),
-        ("reverse", 180, -180, -180),
-        ("stop", 120, 0, 0),
+        ("idle", 240, 0, 0),
+        ("forward", 480, 220, 220),
+        ("turn_left", 360, 170, 220),
+        ("turn_right", 360, 240, 220),
+        ("reverse", 360, -180, -180),
+        ("stop", 240, 0, 0),
     )
 
     phase_index = 0

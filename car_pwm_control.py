@@ -29,6 +29,10 @@ class TwoWheelPwmControllerCfg:
     deadband_pwm: int = 12
     max_wheel_angular_velocity: float = 30.0
     max_wheel_effort: float = 2.5
+    # Installation-level wheel direction correction.
+    # Keep this in low-level controller so upper layers stay clean.
+    left_wheel_direction: float = -1.0
+    right_wheel_direction: float = -1.0
     pwm_response_exponent: float = 1.8
     min_effective_duty: float = 0.0
 
@@ -104,8 +108,8 @@ class TwoWheelPwmController:
     ) -> Dict[str, float]:
         """Map PWM command to Isaac joint velocity targets."""
         return {
-            self.cfg.left_joint_name: self.pwm_to_wheel_velocity(command.left_pwm),
-            self.cfg.right_joint_name: self.pwm_to_wheel_velocity(command.right_pwm),
+            self.cfg.left_joint_name: self.cfg.left_wheel_direction * self.pwm_to_wheel_velocity(command.left_pwm),
+            self.cfg.right_joint_name: self.cfg.right_wheel_direction * self.pwm_to_wheel_velocity(command.right_pwm),
         }
 
     def pwm_to_wheel_effort(self, pwm: int) -> float:
@@ -117,8 +121,8 @@ class TwoWheelPwmController:
     ) -> Dict[str, float]:
         """Map PWM command to Isaac joint effort targets."""
         return {
-            self.cfg.left_joint_name: self.pwm_to_wheel_effort(command.left_pwm),
-            self.cfg.right_joint_name: self.pwm_to_wheel_effort(command.right_pwm),
+            self.cfg.left_joint_name: self.cfg.left_wheel_direction * self.pwm_to_wheel_effort(command.left_pwm),
+            self.cfg.right_joint_name: self.cfg.right_wheel_direction * self.pwm_to_wheel_effort(command.right_pwm),
         }
 
     def batch_from_normalized_actions(

@@ -1,9 +1,28 @@
 import numpy as np
 from isaacsim import SimulationApp
 import omni.usd
-from pxr import Gf, PhysxSchema, UsdGeom, UsdLux, UsdPhysics, UsdShade
-import isaacsim.core.utils.prims as prim_utils
-from isaacsim.core.utils.viewports import set_camera_view
+
+try:
+    import isaacsim.core.utils.prims as prim_utils  # type: ignore
+except Exception:
+    try:
+        import omni.isaac.core.utils.prims as prim_utils  # type: ignore
+    except Exception as exc:
+        raise ModuleNotFoundError(
+            "Could not import Isaac prim utils from either "
+            "'isaacsim.core.utils.prims' or 'omni.isaac.core.utils.prims'."
+        ) from exc
+
+try:
+    from isaacsim.core.utils.viewports import set_camera_view  # type: ignore
+except Exception:
+    try:
+        from omni.isaac.core.utils.viewports import set_camera_view  # type: ignore
+    except Exception as exc:
+        raise ModuleNotFoundError(
+            "Could not import viewport utils from either "
+            "'isaacsim.core.utils.viewports' or 'omni.isaac.core.utils.viewports'."
+        ) from exc
 
 
 GROUND_STATIC_FRICTION = 3.0
@@ -18,6 +37,8 @@ def create_rigid_physics_material(
     dynamic_friction: float = 1.0,
     restitution: float = 0.0,
 ):
+    from pxr import UsdPhysics, UsdShade
+
     stage.DefinePrim(material_path, "Material")
     material_prim = stage.GetPrimAtPath(material_path)
     material_api = UsdPhysics.MaterialAPI.Apply(material_prim)
@@ -32,6 +53,8 @@ def setup_isaac_world(
     camera_pos=[-0.3, -0.3, 0.3],
     camera_target=[0, 0, 0.03],
 ):
+    from pxr import Gf, PhysxSchema, UsdGeom, UsdLux, UsdPhysics, UsdShade
+
     omni.usd.get_context().new_stage()
     stage = omni.usd.get_context().get_stage()
 
