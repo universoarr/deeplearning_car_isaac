@@ -24,30 +24,6 @@ except Exception:
             "'isaacsim.core.utils.viewports' or 'omni.isaac.core.utils.viewports'."
         ) from exc
 
-
-GROUND_STATIC_FRICTION = 3.0
-GROUND_DYNAMIC_FRICTION = 2.5
-GROUND_RESTITUTION = 0.0
-
-
-def create_rigid_physics_material(
-    stage,
-    material_path: str,
-    static_friction: float = 1.0,
-    dynamic_friction: float = 1.0,
-    restitution: float = 0.0,
-):
-    from pxr import UsdPhysics, UsdShade
-
-    stage.DefinePrim(material_path, "Material")
-    material_prim = stage.GetPrimAtPath(material_path)
-    material_api = UsdPhysics.MaterialAPI.Apply(material_prim)
-    material_api.CreateStaticFrictionAttr().Set(static_friction)
-    material_api.CreateDynamicFrictionAttr().Set(dynamic_friction)
-    material_api.CreateRestitutionAttr().Set(restitution)
-    return UsdShade.Material(material_prim)
-
-
 def setup_isaac_world(
     simulation_app: SimulationApp,
     camera_pos=[-0.3, -0.3, 0.3],
@@ -78,20 +54,6 @@ def setup_isaac_world(
     ground_prim = stage.GetPrimAtPath(f"{ground_path}/Plane")
     UsdPhysics.CollisionAPI.Apply(ground_prim)
     PhysxSchema.PhysxCollisionAPI.Apply(ground_prim)
-
-    ground_material = create_rigid_physics_material(
-        stage,
-        f"{ground_path}/GroundPhysicsMaterial",
-        static_friction=GROUND_STATIC_FRICTION,
-        dynamic_friction=GROUND_DYNAMIC_FRICTION,
-        restitution=GROUND_RESTITUTION,
-    )
-
-    UsdShade.MaterialBindingAPI.Apply(ground_prim).Bind(
-        ground_material,
-        UsdShade.Tokens.strongerThanDescendants,
-        "physics",
-    )
 
     set_camera_view(
         eye=np.array(camera_pos),

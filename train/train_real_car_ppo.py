@@ -24,8 +24,9 @@ def main():
         log_root.mkdir(parents=True, exist_ok=True)
         ckpt_root.mkdir(parents=True, exist_ok=True)
 
+        policy = "MultiInputPolicy" if getattr(cfg, "rgb_observation", False) else "MlpPolicy"
         model = PPO(
-            "MlpPolicy",
+            policy,
             env,
             device="cpu",
             verbose=1,

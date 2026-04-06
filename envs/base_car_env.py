@@ -27,24 +27,6 @@ def _rotation_matrix_to_rpy(rot: np.ndarray) -> np.ndarray:
     return np.array([roll, pitch, yaw], dtype=np.float32)
 
 
-def _create_rigid_physics_material(
-    stage,
-    material_path: str,
-    static_friction: float,
-    dynamic_friction: float,
-    restitution: float,
-):
-    from pxr import UsdPhysics, UsdShade
-
-    stage.DefinePrim(material_path, "Material")
-    material_prim = stage.GetPrimAtPath(material_path)
-    material_api = UsdPhysics.MaterialAPI.Apply(material_prim)
-    material_api.CreateStaticFrictionAttr().Set(float(static_friction))
-    material_api.CreateDynamicFrictionAttr().Set(float(dynamic_friction))
-    material_api.CreateRestitutionAttr().Set(float(restitution))
-    return UsdShade.Material(material_prim)
-
-
 def _get_prim_utils():
     import isaacsim.core.utils.prims as prim_utils
 
@@ -92,6 +74,9 @@ class CarEnvCfg:
     camera_mount_roll_deg: float = 0.0
     camera_mount_pitch_deg: float = 0.0
     camera_mount_yaw_deg: float = 0.0
+    rgb_observation: bool = False
+    camera_width: int = 128
+    camera_height: int = 128
     terminate_roll_pitch_abs_deg: float = 45.0
     terminate_z_min: float = -0.10
     reward_forward_gain: float = 14.0
@@ -111,6 +96,9 @@ class BaseCarEnv:
         self.stage = None
         self.left_drive_api = None
         self.right_drive_api = None
+        self._rgb_annot = None
+        self._render_product = None
+        self._last_rgb = None
         self.rng = np.random.default_rng(0)
         self.step_count = 0
         self.last_action = np.zeros(2, dtype=np.float32)
@@ -130,6 +118,7 @@ class BaseCarEnv:
         self._spawn_car()
         for _ in range(60):
             self.simulation_app.update()
+        self._maybe_init_rgb()
         if self.timeline is not None:
             self.timeline.play()
         for _ in range(8):
@@ -145,7 +134,7 @@ class BaseCarEnv:
         self.last_action[:] = 0.0
         self.step_count = 0
         obs, metrics = self._build_obs(pos, rpy, pos, rpy, self.last_action)
-        return obs, {"metrics": metrics}
+        return self._format_obs(obs), {"metrics": metrics}
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, bool, Dict]:
         action = np.asarray(action, dtype=np.float32).reshape(2)
@@ -162,6 +151,7 @@ class BaseCarEnv:
         pos_after, rpy_after = self._get_base_pose()
         self.step_count += 1
 
+        self._maybe_capture_rgb()
         obs, metrics = self._build_obs(pos_before, rpy_before, pos_after, rpy_after, action)
         reward = self._compute_reward(pos_before, pos_after, metrics, action)
         terminated = self._terminated(pos_after, rpy_after, metrics)
@@ -183,11 +173,21 @@ class BaseCarEnv:
             "success": success,
             "pose": np.concatenate([pos_after, rpy_after]).astype(np.float32),
         }
-        return obs, float(reward), terminated, truncated, info
+        if self._last_rgb is not None:
+            info["rgb"] = self._last_rgb
+        return self._format_obs(obs), float(reward), terminated, truncated, info
 
     def close(self) -> None:
         if self.timeline is not None:
             self.timeline.stop()
+
+    def _format_obs(self, state_vec: np.ndarray):
+        if not self.cfg.rgb_observation:
+            return state_vec
+        rgb = self._last_rgb
+        if rgb is None:
+            rgb = np.zeros((int(self.cfg.camera_height), int(self.cfg.camera_width), 3), dtype=np.uint8)
+        return {"state": state_vec, "rgb": rgb}
 
     def _maybe_get_timeline(self):
         try:
@@ -197,16 +197,51 @@ class BaseCarEnv:
         except Exception:
             return None
 
-    def _import_pxr(self):
-        from pxr import Gf, PhysxSchema, Usd, UsdGeom, UsdLux, UsdPhysics, UsdShade
+    def _maybe_init_rgb(self) -> None:
+        if not self.cfg.rgb_observation:
+            return
+        if self._rgb_annot is not None:
+            return
+        try:
+            import omni.replicator.core as rep  # type: ignore
+        except Exception as exc:
+            raise ModuleNotFoundError(
+                "RGB observation requires 'omni.replicator.core'. "
+                "Please run with an Isaac Sim build that includes Replicator."
+            ) from exc
 
-        return Gf, PhysxSchema, Usd, UsdGeom, UsdLux, UsdPhysics, UsdShade
+        camera_path = f"{self.cfg.base_link_path}/rl_front_camera"
+        self._render_product = rep.create.render_product(
+            camera_path,
+            resolution=(int(self.cfg.camera_width), int(self.cfg.camera_height)),
+        )
+        self._rgb_annot = rep.AnnotatorRegistry.get_annotator("rgb")
+        self._rgb_annot.attach([self._render_product])
+        self._last_rgb = None
+
+    def _maybe_capture_rgb(self) -> None:
+        if not self.cfg.rgb_observation or self._rgb_annot is None:
+            return
+        try:
+            data = self._rgb_annot.get_data()
+        except Exception:
+            return
+        if data is None:
+            return
+        rgb = np.asarray(data)
+        if rgb.ndim == 3 and rgb.shape[-1] >= 3:
+            self._last_rgb = rgb[..., :3].astype(np.uint8, copy=False)
+
+    def _import_pxr(self):
+        from pxr import Gf, PhysxSchema, Usd, UsdGeom, UsdLux, UsdPhysics
+
+        return Gf, PhysxSchema, Usd, UsdGeom, UsdLux, UsdPhysics
 
     def _build_world(self):
         import omni.usd
         prim_utils = _get_prim_utils()
 
-        Gf, PhysxSchema, _, UsdGeom, UsdLux, UsdPhysics, UsdShade = self._import_pxr()
+        Gf, PhysxSchema, _, UsdGeom, UsdLux, UsdPhysics = self._import_pxr()
         omni.usd.get_context().new_stage()
         stage = omni.usd.get_context().get_stage()
         UsdGeom.SetStageUpAxis(stage, UsdGeom.Tokens.z)
@@ -222,8 +257,6 @@ class BaseCarEnv:
         prim_utils.create_prim("/World/Ground/Plane", prim_type="Plane", scale=np.array([90.0, 90.0, 1.0]))
         ground = stage.GetPrimAtPath("/World/Ground/Plane")
         UsdPhysics.CollisionAPI.Apply(ground)
-        mat = _create_rigid_physics_material(stage, "/World/PhysicsMaterials/Ground", 2.0, 1.8, 0.0)
-        UsdShade.MaterialBindingAPI.Apply(ground).Bind(mat, UsdShade.Tokens.strongerThanDescendants, "physics")
         self._spawn_lane_walls(stage)
         self._spawn_obstacles(stage)
         _try_set_camera_view(
@@ -233,7 +266,7 @@ class BaseCarEnv:
         return stage
 
     def _spawn_lane_walls(self, stage) -> None:
-        Gf, _, _, UsdGeom, _, UsdPhysics, _ = self._import_pxr()
+        Gf, _, _, UsdGeom, _, UsdPhysics = self._import_pxr()
         wall_half_y = self.cfg.lane_half_width + 0.02
         for side, y_sign in (("L", 1.0), ("R", -1.0)):
             path = f"/World/LaneWall{side}"
@@ -245,7 +278,7 @@ class BaseCarEnv:
             UsdPhysics.CollisionAPI.Apply(cube.GetPrim())
 
     def _spawn_obstacles(self, stage) -> None:
-        Gf, _, _, UsdGeom, _, UsdPhysics, _ = self._import_pxr()
+        Gf, _, _, UsdGeom, _, UsdPhysics = self._import_pxr()
         self.obstacles_2d = []
         xs = np.linspace(0.4, self.cfg.course_length - 0.3, self.cfg.obstacle_count)
         for i, x_center in enumerate(xs):
@@ -263,27 +296,12 @@ class BaseCarEnv:
             self.obstacles_2d.append((x_center - half_x, x_center + half_x, y_center - half_y, y_center + half_y))
 
     def _spawn_car(self) -> None:
-        Gf, PhysxSchema, _, UsdGeom, _, UsdPhysics, UsdShade = self._import_pxr()
+        Gf, PhysxSchema, _, UsdGeom, _, UsdPhysics = self._import_pxr()
         prim_utils = _get_prim_utils()
         prim_utils.create_prim(
             self.cfg.car_path,
             usd_path=self.cfg.usd_path,
             translation=np.array([0.0, 0.0, self.cfg.spawn_height], dtype=np.float32),
-        )
-
-        drive_mat = _create_rigid_physics_material(
-            self.stage,
-            "/World/PhysicsMaterials/DriveWheel",
-            self.cfg.drive_static_friction,
-            self.cfg.drive_dynamic_friction,
-            0.0,
-        )
-        free_mat = _create_rigid_physics_material(
-            self.stage,
-            "/World/PhysicsMaterials/FreeWheel",
-            self.cfg.free_static_friction,
-            self.cfg.free_dynamic_friction,
-            0.0,
         )
         drive_wheels = (self.cfg.left_joint_name, self.cfg.right_joint_name)
         for wheel_name in drive_wheels + self.cfg.free_joint_names:
@@ -292,8 +310,6 @@ class BaseCarEnv:
                 raise RuntimeError(f"Wheel prim missing: {wheel_name}")
             UsdPhysics.CollisionAPI.Apply(wp).CreateCollisionEnabledAttr(True)
             PhysxSchema.PhysxCollisionAPI.Apply(wp)
-            mat = drive_mat if wheel_name in drive_wheels else free_mat
-            UsdShade.MaterialBindingAPI.Apply(wp).Bind(mat, UsdShade.Tokens.strongerThanDescendants, "physics")
 
         self.left_drive_api = self._configure_joint_drive(self.cfg.left_joint_name, self.cfg.drive_max_force)
         self.right_drive_api = self._configure_joint_drive(self.cfg.right_joint_name, self.cfg.drive_max_force)
@@ -302,7 +318,7 @@ class BaseCarEnv:
         self._attach_camera()
 
     def _configure_joint_drive(self, joint_name: str, max_force: float):
-        _, _, _, _, _, UsdPhysics, _ = self._import_pxr()
+        _, _, _, _, _, UsdPhysics = self._import_pxr()
         joint = self.stage.GetPrimAtPath(f"{self.cfg.joints_path}/{joint_name}")
         if not joint or not joint.IsValid():
             raise RuntimeError(f"Joint missing: {joint_name}")
@@ -315,7 +331,7 @@ class BaseCarEnv:
         return api
 
     def _attach_camera(self) -> None:
-        Gf, _, _, UsdGeom, _, _, _ = self._import_pxr()
+        Gf, _, _, UsdGeom, _, _ = self._import_pxr()
         camera = UsdGeom.Camera.Define(self.stage, f"{self.cfg.base_link_path}/rl_front_camera")
         xform = UsdGeom.Xformable(camera.GetPrim())
         xform.AddTranslateOp().Set(
@@ -330,7 +346,7 @@ class BaseCarEnv:
         )
 
     def _get_base_pose(self) -> Tuple[np.ndarray, np.ndarray]:
-        _, _, Usd, UsdGeom, _, _, _ = self._import_pxr()
+        _, _, Usd, UsdGeom, _, _ = self._import_pxr()
         xf = UsdGeom.Xformable(self.stage.GetPrimAtPath(self.cfg.base_link_path))
         m = xf.ComputeLocalToWorldTransform(Usd.TimeCode.Default())
         t = m.ExtractTranslation()

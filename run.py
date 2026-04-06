@@ -9,45 +9,13 @@ import isaacsim.core.utils.prims as prim_utils
 from pxr import UsdPhysics, UsdShade
 
 from car_pwm_control import DEFAULT_PWM_CONTROLLER
-from environment import create_rigid_physics_material, setup_isaac_world
+from environment import setup_isaac_world
 
 
 USD_PATH = r"D:\mac\project\deeplearning_car_isaac\usd\real_car_rigid_sdf.usd" #_rigid_sdf
 CAR_PATH = "/World/Car"
 JOINTS_PATH = f"{CAR_PATH}/joints"
 DRIVE_SPEED_SCALE = 3.0
-
-
-def apply_wheel_physics(stage):
-    drive_material = create_rigid_physics_material(
-        stage,
-        "/World/PhysicsMaterials/DriveWheel",
-        static_friction=0.9,
-        dynamic_friction=0.7,
-        restitution=0.0,
-    )
-    free_material = create_rigid_physics_material(
-        stage,
-        "/World/PhysicsMaterials/FreeWheel",
-        static_friction=0.5,
-        dynamic_friction=0.35,
-        restitution=0.0,
-    )
-
-    for wheel_name, material in (("lb", drive_material), ("rb", drive_material), ("rw", free_material)):
-        wheel_prim = stage.GetPrimAtPath(f"{CAR_PATH}/{wheel_name}")
-        if not wheel_prim or not wheel_prim.IsValid():
-            print(f"[WARN] Missing wheel prim: {CAR_PATH}/{wheel_name}")
-            continue
-
-        collision_api = UsdPhysics.CollisionAPI.Apply(wheel_prim)
-        collision_api.CreateCollisionEnabledAttr(True)
-        UsdShade.MaterialBindingAPI.Apply(wheel_prim).Bind(
-            material,
-            UsdShade.Tokens.strongerThanDescendants,
-            "physics",
-        )
-
 
 def configure_joint_drive(stage, joint_name: str, max_force: float):
     joint_path = f"{JOINTS_PATH}/{joint_name}"
@@ -113,8 +81,7 @@ def main():
         camera_target=[0.0, 0.0, 0.02],
     )
 
-    prim_utils.create_prim(CAR_PATH, usd_path=USD_PATH, translation=np.array([0.0, 0.0, 0.06]))
-    apply_wheel_physics(stage)
+    prim_utils.create_prim(CAR_PATH, usd_path=USD_PATH, translation=np.array([0.0, 0.0, 0.06]), orientation=np.array([0.0, 0.0, 1.0, 0.0]))
 
     for _ in range(60):
         simulation_app.update()

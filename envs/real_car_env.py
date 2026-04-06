@@ -4,7 +4,7 @@ from envs.base_car_env import BaseCarEnv, CarEnvCfg
 
 
 REAL_CAR_CFG = CarEnvCfg(
-    usd_path=r"D:\mac\project\deeplearning_car_isaac\usd\real_car_rigid_sdf.usd.usd",
+    usd_path=r"D:\mac\project\deeplearning_car_isaac\usd\real_car_rigid_sdf.usd",
     car_path="/World/Car",
     base_link_path="/World/Car/base_link",
     joints_path="/World/Car/joints",
@@ -17,6 +17,13 @@ REAL_CAR_CFG = CarEnvCfg(
     camera_mount_roll_deg=0.0,
     camera_mount_pitch_deg=0.0,
     camera_mount_yaw_deg=0.0,
+)
+
+REAL_CAR_RGB_CFG = CarEnvCfg(
+    **REAL_CAR_CFG.__dict__,
+    rgb_observation=True,
+    camera_width=128,
+    camera_height=128,
 )
 
 
