@@ -1,4 +1,4 @@
-from __future__ import annotations
+﻿from __future__ import annotations
 
 from dataclasses import dataclass
 from math import atan2, cos, sin
@@ -65,18 +65,18 @@ class CarEnvCfg:
     lane_half_width: float = 0.3
     wall_height: float = 0.08
     obstacle_count: int = 8
-    camera_num_rays: int = 11
-    camera_fov_deg: float = 100.0
-    camera_max_range: float = 0.8
-    camera_mount_x: float = 0.0
-    camera_mount_y: float = 0.05
-    camera_mount_z: float = 0.02
-    camera_mount_roll_deg: float = 0.0
+    camera_mount_x: float = -0.02
+    camera_mount_y: float = 0.0
+    camera_mount_z: float = -0.005
+    camera_mount_roll_deg: float = -80.0
     camera_mount_pitch_deg: float = 0.0
-    camera_mount_yaw_deg: float = 0.0
+    camera_mount_yaw_deg: float = -90.0
+    camera_focal_length_mm: float = 8.0
+    camera_horizontal_aperture_mm: float = 20.955
+    camera_vertical_aperture_mm: float = 15.2908
     rgb_observation: bool = False
-    camera_width: int = 128
-    camera_height: int = 128
+    camera_width: int = 64
+    camera_height: int = 64
     terminate_roll_pitch_abs_deg: float = 45.0
     terminate_z_min: float = -0.10
     reward_forward_gain: float = 14.0
@@ -84,6 +84,9 @@ class CarEnvCfg:
     reward_heading_penalty: float = 0.8
     reward_collision_penalty: float = 4.0
     reward_success_bonus: float = 30.0
+    reward_camera_avoid_gain: float = 2.0
+    reward_camera_block_penalty: float = 3.5
+    reward_camera_clear_forward_gain: float = 1.2
 
 
 class BaseCarEnv:
@@ -92,7 +95,9 @@ class BaseCarEnv:
     def __init__(self, simulation_app: SimulationApp, cfg: CarEnvCfg) -> None:
         self.simulation_app = simulation_app
         self.cfg = cfg
-        self.observation_dim = 14 + self.cfg.camera_num_rays
+        if not bool(self.cfg.rgb_observation):
+            raise ValueError("BaseCarEnv now only supports RGB observation mode.")
+        self.observation_dim = 6
         self.stage = None
         self.left_drive_api = None
         self.right_drive_api = None
@@ -108,8 +113,12 @@ class BaseCarEnv:
         self.init_rpy = np.zeros(3, dtype=np.float32)
         self.track_forward = np.array([1.0, 0.0], dtype=np.float32)
         self.track_left = np.array([0.0, 1.0], dtype=np.float32)
-        self.obstacles_2d: list[tuple[float, float, float, float]] = []
         self.timeline = self._maybe_get_timeline()
+        self._last_camera_signals = {
+            "camera_blocked": 0.0,
+            "camera_balance": 0.0,
+            "camera_clear_center": 0.0,
+        }
 
     def reset(self, seed: int | None = None) -> Tuple[np.ndarray, Dict]:
         if seed is not None:
@@ -123,6 +132,10 @@ class BaseCarEnv:
             self.timeline.play()
         for _ in range(8):
             self.simulation_app.update()
+        # Warm up sensor render products to avoid black first frame.
+        for _ in range(12):
+            self.simulation_app.update()
+            self._maybe_capture_rgb()
         pos, rpy = self._get_base_pose()
         self.init_pos = pos.copy()
         self.init_rpy = rpy.copy()
@@ -133,16 +146,29 @@ class BaseCarEnv:
         self.prev_rpy = rpy
         self.last_action[:] = 0.0
         self.step_count = 0
-        obs, metrics = self._build_obs(pos, rpy, pos, rpy, self.last_action)
-        return self._format_obs(obs), {"metrics": metrics}
+        obs, metrics = self._build_obs(pos, rpy, pos, rpy)
+        imu_for_info = np.array([obs[0], obs[1], obs[2], rpy[0], rpy[1], rpy[2]], dtype=np.float32)
+        return self._format_obs(obs), {"metrics": metrics, "imu": imu_for_info}
 
     def step(self, action: np.ndarray) -> Tuple[np.ndarray, float, bool, bool, Dict]:
         action = np.asarray(action, dtype=np.float32).reshape(2)
         action = np.clip(action, -1.0, 1.0)
         cmd = DEFAULT_PWM_CONTROLLER.from_normalized_action(action)
-        targets = DEFAULT_PWM_CONTROLLER.command_to_joint_velocity_targets(cmd)
-        targets[self.cfg.left_joint_name] *= self.cfg.drive_speed_scale
-        targets[self.cfg.right_joint_name] *= self.cfg.drive_speed_scale
+        # Build wheel targets by semantic action channel (left/right), then map to configured joints.
+        left_vel = (
+            DEFAULT_PWM_CONTROLLER.cfg.left_wheel_direction
+            * DEFAULT_PWM_CONTROLLER.pwm_to_wheel_velocity(cmd.left_pwm)
+            * self.cfg.drive_speed_scale
+        )
+        right_vel = (
+            DEFAULT_PWM_CONTROLLER.cfg.right_wheel_direction
+            * DEFAULT_PWM_CONTROLLER.pwm_to_wheel_velocity(cmd.right_pwm)
+            * self.cfg.drive_speed_scale
+        )
+        targets = {
+            self.cfg.left_joint_name: float(left_vel),
+            self.cfg.right_joint_name: float(right_vel),
+        }
         self.left_drive_api.GetTargetVelocityAttr().Set(float(targets[self.cfg.left_joint_name]))
         self.right_drive_api.GetTargetVelocityAttr().Set(float(targets[self.cfg.right_joint_name]))
         pos_before, rpy_before = self._get_base_pose()
@@ -152,7 +178,8 @@ class BaseCarEnv:
         self.step_count += 1
 
         self._maybe_capture_rgb()
-        obs, metrics = self._build_obs(pos_before, rpy_before, pos_after, rpy_after, action)
+        self._last_camera_signals = self._extract_camera_avoidance_signals()
+        obs, metrics = self._build_obs(pos_before, rpy_before, pos_after, rpy_after)
         reward = self._compute_reward(pos_before, pos_after, metrics, action)
         terminated = self._terminated(pos_after, rpy_after, metrics)
         truncated = self.step_count >= self.cfg.max_episode_steps
@@ -172,6 +199,7 @@ class BaseCarEnv:
             "command": cmd.as_tuple(),
             "success": success,
             "pose": np.concatenate([pos_after, rpy_after]).astype(np.float32),
+            "imu": np.array([obs[0], obs[1], obs[2], rpy_after[0], rpy_after[1], rpy_after[2]], dtype=np.float32),
         }
         if self._last_rgb is not None:
             info["rgb"] = self._last_rgb
@@ -182,12 +210,11 @@ class BaseCarEnv:
             self.timeline.stop()
 
     def _format_obs(self, state_vec: np.ndarray):
-        if not self.cfg.rgb_observation:
-            return state_vec
         rgb = self._last_rgb
         if rgb is None:
             rgb = np.zeros((int(self.cfg.camera_height), int(self.cfg.camera_width), 3), dtype=np.uint8)
-        return {"state": state_vec, "rgb": rgb}
+        imu = np.asarray(state_vec[:6], dtype=np.float32)
+        return {"rgb": rgb, "imu": imu}
 
     def _maybe_get_timeline(self):
         try:
@@ -198,8 +225,6 @@ class BaseCarEnv:
             return None
 
     def _maybe_init_rgb(self) -> None:
-        if not self.cfg.rgb_observation:
-            return
         if self._rgb_annot is not None:
             return
         try:
@@ -220,7 +245,7 @@ class BaseCarEnv:
         self._last_rgb = None
 
     def _maybe_capture_rgb(self) -> None:
-        if not self.cfg.rgb_observation or self._rgb_annot is None:
+        if self._rgb_annot is None:
             return
         try:
             data = self._rgb_annot.get_data()
@@ -252,7 +277,9 @@ class BaseCarEnv:
             int(round(1.0 / self.cfg.physics_dt))
         )
         light = UsdLux.DistantLight.Define(stage, "/World/Light")
-        light.CreateIntensityAttr(4000.0)
+        light.CreateIntensityAttr(12000.0)
+        fill = UsdLux.DomeLight.Define(stage, "/World/FillLight")
+        fill.CreateIntensityAttr(900.0)
         prim_utils.create_prim("/World/Ground", prim_type="Xform")
         prim_utils.create_prim("/World/Ground/Plane", prim_type="Plane", scale=np.array([90.0, 90.0, 1.0]))
         ground = stage.GetPrimAtPath("/World/Ground/Plane")
@@ -302,6 +329,7 @@ class BaseCarEnv:
             self.cfg.car_path,
             usd_path=self.cfg.usd_path,
             translation=np.array([0.0, 0.0, self.cfg.spawn_height], dtype=np.float32),
+            orientation=np.array([0.0, 0.0, 1.0, 0.0], dtype=np.float32),
         )
         drive_wheels = (self.cfg.left_joint_name, self.cfg.right_joint_name)
         for wheel_name in drive_wheels + self.cfg.free_joint_names:
@@ -333,6 +361,11 @@ class BaseCarEnv:
     def _attach_camera(self) -> None:
         Gf, _, _, UsdGeom, _, _ = self._import_pxr()
         camera = UsdGeom.Camera.Define(self.stage, f"{self.cfg.base_link_path}/rl_front_camera")
+        # Wider FOV by using a shorter focal length.
+        camera.CreateFocalLengthAttr(float(self.cfg.camera_focal_length_mm))
+        camera.CreateHorizontalApertureAttr(float(self.cfg.camera_horizontal_aperture_mm))
+        camera.CreateVerticalApertureAttr(float(self.cfg.camera_vertical_aperture_mm))
+        camera.CreateClippingRangeAttr(Gf.Vec2f(0.001, 100.0))
         xform = UsdGeom.Xformable(camera.GetPrim())
         xform.AddTranslateOp().Set(
             Gf.Vec3f(float(self.cfg.camera_mount_x), float(self.cfg.camera_mount_y), float(self.cfg.camera_mount_z))
@@ -358,11 +391,10 @@ class BaseCarEnv:
         return np.array([t[0], t[1], t[2]], dtype=np.float32), _rotation_matrix_to_rpy(rot)
 
     def _build_obs(
-        self, pos_before: np.ndarray, rpy_before: np.ndarray, pos_after: np.ndarray, rpy_after: np.ndarray, action: np.ndarray
+        self, pos_before: np.ndarray, rpy_before: np.ndarray, pos_after: np.ndarray, rpy_after: np.ndarray
     ) -> Tuple[np.ndarray, Dict[str, float]]:
         dt = self.cfg.physics_dt * self.cfg.action_repeat
         vel = (pos_after - pos_before) / max(dt, 1.0e-6)
-        yaw = float(rpy_after[2])
         rel_rpy = np.array(
             [
                 _wrap_angle(float(rpy_after[0] - self.init_rpy[0])),
@@ -381,79 +413,59 @@ class BaseCarEnv:
         )
         imu_acc = np.zeros(3, dtype=np.float32)
         imu_gyro = d_rpy / max(dt, 1.0e-6)
-        depth = self._depth_bins(pos_after, yaw)
         delta_xy = pos_after[:2] - self.init_pos[:2]
         lateral_error = float(np.dot(delta_xy, self.track_left))
         heading_error = float(rel_rpy[2])
         forward_speed = float(np.dot(vel[:2], self.track_forward))
-        roll = float(rel_rpy[0])
-        pitch = float(rel_rpy[1])
-        progress = float(np.clip(np.dot(delta_xy, self.track_forward) / max(self.cfg.course_length, 1.0e-6), -1.0, 2.0))
-        kinematic = np.array([lateral_error, heading_error, forward_speed, roll, pitch, progress], dtype=np.float32)
-        obs = np.concatenate([imu_acc, imu_gyro, depth, kinematic, action], dtype=np.float32)
+        obs = np.concatenate([imu_acc, imu_gyro], dtype=np.float32)
         metrics = {
             "forward_speed": forward_speed,
             "lateral_error": abs(lateral_error),
             "heading_error": abs(heading_error),
-            "center_depth": float(depth[len(depth) // 2]),
+            "camera_blocked": float(self._last_camera_signals["camera_blocked"]),
+            "camera_balance": float(self._last_camera_signals["camera_balance"]),
+            "camera_clear_center": float(self._last_camera_signals["camera_clear_center"]),
         }
         return obs, metrics
 
-    def _depth_bins(self, pos: np.ndarray, yaw: float) -> np.ndarray:
-        bins = np.ones(self.cfg.camera_num_rays, dtype=np.float32)
-        cam_x = float(pos[0] + self.cfg.camera_mount_x * cos(yaw) - self.cfg.camera_mount_y * sin(yaw))
-        cam_y = float(pos[1] + self.cfg.camera_mount_x * sin(yaw) + self.cfg.camera_mount_y * cos(yaw))
-        cam_yaw = float(yaw + np.deg2rad(self.cfg.camera_mount_yaw_deg))
-        half_fov = np.deg2rad(self.cfg.camera_fov_deg * 0.5)
-        angles = np.linspace(-half_fov, half_fov, self.cfg.camera_num_rays, dtype=np.float32)
-        lane_half = self.cfg.lane_half_width
-        lane_end = self.cfg.course_length + 0.12
-        max_range = self.cfg.camera_max_range
-        for i, a_local in enumerate(angles):
-            a = float(cam_yaw + a_local)
-            dx, dy = cos(a), sin(a)
-            best = max_range
-            if abs(dy) > 1.0e-6:
-                t1 = (lane_half - cam_y) / dy
-                t2 = (-lane_half - cam_y) / dy
-                if 0.0 < t1 < best:
-                    xh = cam_x + dx * t1
-                    if 0.0 <= xh <= lane_end:
-                        best = t1
-                if 0.0 < t2 < best:
-                    xh = cam_x + dx * t2
-                    if 0.0 <= xh <= lane_end:
-                        best = t2
-            if dx > 1.0e-6:
-                te = (lane_end - cam_x) / dx
-                if 0.0 < te < best:
-                    best = te
-            for x0, x1, y0, y1 in self.obstacles_2d:
-                hit = self._ray_aabb(cam_x, cam_y, dx, dy, x0, x1, y0, y1, max_range)
-                if hit is not None and hit < best:
-                    best = hit
-            bins[i] = np.clip(best / max_range, 0.0, 1.0)
-        return bins
+    def _extract_camera_avoidance_signals(self) -> Dict[str, float]:
+        rgb = self._last_rgb
+        if rgb is None or rgb.ndim != 3 or rgb.shape[2] < 3:
+            return {
+                "camera_blocked": 0.0,
+                "camera_balance": 0.0,
+                "camera_clear_center": 0.0,
+            }
 
-    def _ray_aabb(
-        self, ox: float, oy: float, dx: float, dy: float, x0: float, x1: float, y0: float, y1: float, max_range: float
-    ) -> float | None:
-        tmin, tmax = 0.0, max_range
-        if abs(dx) < 1.0e-6:
-            if ox < x0 or ox > x1:
-                return None
-        else:
-            tx1, tx2 = (x0 - ox) / dx, (x1 - ox) / dx
-            tmin, tmax = max(tmin, min(tx1, tx2)), min(tmax, max(tx1, tx2))
-        if abs(dy) < 1.0e-6:
-            if oy < y0 or oy > y1:
-                return None
-        else:
-            ty1, ty2 = (y0 - oy) / dy, (y1 - oy) / dy
-            tmin, tmax = max(tmin, min(ty1, ty2)), min(tmax, max(ty1, ty2))
-        if tmax < tmin or tmax <= 0.0:
-            return None
-        return tmin if tmin > 0.0 else tmax
+        gray = np.mean(rgb.astype(np.float32), axis=2) / 255.0
+        h, w = gray.shape
+        if h < 4 or w < 4:
+            return {
+                "camera_blocked": 0.0,
+                "camera_balance": 0.0,
+                "camera_clear_center": 0.0,
+            }
+
+        # 只看图像下半部分，近距离障碍更显著。
+        near = gray[h // 2 :, :]
+        left = near[:, : w // 2]
+        right = near[:, w // 2 :]
+        c0, c1 = int(w * 0.35), int(w * 0.65)
+        center = near[:, c0:c1]
+
+        left_free = float(np.mean(left))
+        right_free = float(np.mean(right))
+        clear_center = float(np.mean(center))
+
+        # blocked 越大表示前方越“暗/密”，鼓励减速与绕行。
+        blocked = float(np.clip(1.0 - clear_center, 0.0, 1.0))
+        # balance > 0 表示右侧更通畅；< 0 表示左侧更通畅。
+        balance = float(np.clip(right_free - left_free, -1.0, 1.0))
+        return {
+            "camera_blocked": blocked,
+            "camera_balance": balance,
+            "camera_clear_center": clear_center,
+        }
 
     def _compute_reward(self, pos_before: np.ndarray, pos_after: np.ndarray, metrics: Dict[str, float], action: np.ndarray) -> float:
         progress = float(np.dot(pos_after[:2] - pos_before[:2], self.track_forward))
@@ -461,8 +473,17 @@ class BaseCarEnv:
         reward -= self.cfg.reward_lane_penalty * metrics["lateral_error"]
         reward -= self.cfg.reward_heading_penalty * metrics["heading_error"]
         reward -= 0.05 * float(np.sum(np.square(action - self.last_action)))
-        if metrics["center_depth"] < 0.05 and metrics["forward_speed"] < 0.02:
-            reward -= self.cfg.reward_collision_penalty
+        camera_blocked = float(metrics["camera_blocked"])
+        camera_balance = float(metrics["camera_balance"])
+        camera_clear_center = float(metrics["camera_clear_center"])
+        # 由图像左右通行差引导转向，减少“迎着障碍冲”的行为。
+        steer = float(action[1] - action[0])
+        steer_align = np.tanh(3.0 * camera_balance * steer)
+        reward += self.cfg.reward_camera_avoid_gain * float(steer_align)
+        # 前方拥堵时抑制前冲，前方通畅时鼓励稳定前进。
+        forward_cmd = float(max((float(action[0]) + float(action[1])) * 0.5, 0.0))
+        reward -= self.cfg.reward_camera_block_penalty * camera_blocked * forward_cmd
+        reward += self.cfg.reward_camera_clear_forward_gain * camera_clear_center * max(progress, 0.0)
         return float(reward)
 
     def _terminated(self, pos_after: np.ndarray, rpy_after: np.ndarray, metrics: Dict[str, float]) -> bool:
@@ -474,7 +495,5 @@ class BaseCarEnv:
         rel_roll = abs(_wrap_angle(float(rpy_after[0] - self.init_rpy[0])))
         rel_pitch = abs(_wrap_angle(float(rpy_after[1] - self.init_rpy[1])))
         if rel_roll > tilt_lim or rel_pitch > tilt_lim:
-            return True
-        if metrics["center_depth"] < 0.02:
             return True
         return False
