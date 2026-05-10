@@ -15,7 +15,7 @@ from environment import setup_isaac_world
 USD_PATH = r"D:\mac\project\deeplearning_car_isaac\usd\real_car_rigid_sdf.usd" #_rigid_sdf
 CAR_PATH = "/World/Car"
 JOINTS_PATH = f"{CAR_PATH}/joints"
-DRIVE_SPEED_SCALE = 3.0
+DRIVE_SPEED_SCALE = 20.0
 
 def configure_joint_drive(stage, joint_name: str, max_force: float):
     joint_path = f"{JOINTS_PATH}/{joint_name}"
@@ -33,7 +33,8 @@ def configure_joint_drive(stage, joint_name: str, max_force: float):
 
 
 def set_drive_pwm(left_drive_api, right_drive_api, left_pwm: float, right_pwm: float):
-    command = DEFAULT_PWM_CONTROLLER.make_command(left_pwm, right_pwm)
+    # 当前实车模型左右通道相反：这里仅在 run.py 层做左右互换。
+    command = DEFAULT_PWM_CONTROLLER.make_command(right_pwm, left_pwm)
     targets = DEFAULT_PWM_CONTROLLER.command_to_joint_velocity_targets(command)
     targets["lb"] *= DRIVE_SPEED_SCALE
     targets["rb"] *= DRIVE_SPEED_SCALE

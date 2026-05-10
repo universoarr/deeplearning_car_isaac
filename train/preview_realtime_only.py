@@ -1,27 +1,26 @@
 from __future__ import annotations
 
 import argparse
+import time
 from pathlib import Path
 
 import numpy as np
 from isaacsim import SimulationApp
-
-from car_pwm_control import DEFAULT_PWM_CONTROLLER
 
 def _parse_args():
     p = argparse.ArgumentParser()
     p.add_argument(
         "--policy",
         type=str,
-        default="random",
+        default="ppo",
         choices=["random", "ppo"],
         help="Strategy type. Default is random for smoke-check.",
     )
-    p.add_argument("--model", type=str, default="", help="Path to PPO .zip model. Required when --policy ppo.")
+    p.add_argument("--model", type=str, default="D:\mac\project\deeplearning_car_isaac\\train\logs\isaaclab_task\\run_20260509_233520\\real_car_rgb_imu_final.zip", help="Path to PPO .zip model. Required when --policy ppo.")
     p.add_argument("--status-print-every", type=int, default=10)
     p.add_argument("--max-steps", type=int, default=0, help="0 means no step limit; stop by closing windows.")
     p.add_argument("--deterministic", action="store_true")
-    p.add_argument("--random-action-scale", type=float, default=0.7, help="Random action scale in [0, 1].")
+    p.add_argument("--random-action-scale", type=float, default=0.7, help="Random action scale in [0, 1], sampled as [-scale, +scale].")
     return p.parse_args()
 
 
@@ -59,16 +58,19 @@ def main() -> None:
         if model_path is not None:
             print("[VALIDATE] model:", str(model_path))
         print("[VALIDATE] controls: Q quit, R reset.")
+        last_reward_print_ts = time.time()
 
         while simulation_app.is_running():
             rgb = obs["rgb"]
             # 策略切换：支持随机策略和 PPO 策略，便于快速检查环境状态。
             if args.policy == "random":
+                # 随机策略也仅输出正向动作，避免负 PWM。
                 action = rng.uniform(-action_scale, action_scale, size=(2,)).astype(np.float32)
             else:
                 assert model is not None
                 action, _ = model.predict(obs, deterministic=bool(args.deterministic))
                 action = np.asarray(action, dtype=np.float32).reshape(2)
+                action = np.clip(action, -1.0, 1.0)
 
             # step 内部会完成：action -> PWM -> 轮关节目标速度 -> 物理推进 -> 新观测与状态。
             obs, reward, terminated, truncated, info = env.step(action)
@@ -78,6 +80,8 @@ def main() -> None:
             pose = np.asarray(info.get("pose", np.zeros(6, dtype=np.float32)), dtype=np.float32).reshape(6)
             metrics = dict(info.get("metrics", {}))
             pwm_cmd = tuple(info.get("command", (0, 0)))
+            action_raw = np.asarray(info.get("action_raw", action), dtype=np.float32).reshape(2)
+            action_applied = np.asarray(info.get("action_applied", action), dtype=np.float32).reshape(2)
             targets = dict(info.get("targets", {}))
             xy = pose[:2]
             moved = 0.0 if prev_xy is None else float(np.linalg.norm(xy - prev_xy))
@@ -100,7 +104,8 @@ def main() -> None:
                         "terminated": bool(terminated),
                         "truncated": bool(truncated),
                         "success": bool(info.get("success", False)),
-                        "action": (float(action[0]), float(action[1])),
+                        "action_raw": (float(action_raw[0]), float(action_raw[1])),
+                        "action_applied": (float(action_applied[0]), float(action_applied[1])),
                         "pwm_left_right": (int(pwm_cmd[0]), int(pwm_cmd[1])),
                         "wheel_targets": {
                             "left_joint": float(targets.get(REAL_CAR_RGB_CFG.left_joint_name, 0.0)),
@@ -115,6 +120,18 @@ def main() -> None:
                         "moved_xy": moved,
                     },
                 )
+
+            # 每秒打印一次 reward 各项，便于在 preview 中观察奖励构成变化。
+            now_ts = time.time()
+            if (now_ts - last_reward_print_ts) >= 1.0:
+                reward_terms = info.get("reward_terms", {})
+                if isinstance(reward_terms, dict):
+                    ordered_keys = sorted(reward_terms.keys())
+                    terms_str = ", ".join([f"{k}={float(reward_terms[k]):+.4f}" for k in ordered_keys])
+                    print(f"[REWARD_STATUS] step={step} total={float(reward):+.4f} {terms_str}")
+                else:
+                    print(f"[REWARD_STATUS] step={step} total={float(reward):+.4f}")
+                last_reward_print_ts = now_ts
 
             # 显示实时摄像头画面并叠加关键状态，便于在线观察策略行为。
             bgr = cv2.cvtColor(rgb, cv2.COLOR_RGB2BGR)

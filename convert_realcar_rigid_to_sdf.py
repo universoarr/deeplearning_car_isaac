@@ -22,7 +22,7 @@ def _clear_xform_ops(prim) -> None:
 
 def main() -> None:
     import omni.usd
-    from pxr import Usd, UsdGeom, UsdPhysics
+    from pxr import Gf, Usd, UsdGeom, UsdPhysics
 
     omni.usd.get_context().open_stage(SOURCE_USD)
     simulation_app.update()

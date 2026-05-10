@@ -22,3 +22,5 @@ train/train_real_car.py是训练环境连通性测试入口
 软体在小尺度下乱跳（已解决/放大50倍）
 
 * 软体过软（1 铰链/2杨氏模量剪切模量）
+
+tensorboard --logdir=D:\mac\project\deeplearning_car_isaac\train\logs\isaaclab_task\run --port=6006

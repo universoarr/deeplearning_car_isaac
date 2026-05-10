@@ -11,6 +11,11 @@ from envs.real_car_env import REAL_CAR_RGB_CFG
 from envs.real_car_gym_env import RealCarGymEnv
 
 try:
+    import gymnasium as gym
+except Exception:
+    gym = None
+
+try:
     from isaaclab.utils import configclass as _configclass  # type: ignore
 except Exception:
     try:
@@ -47,8 +52,11 @@ def get_task_cfg() -> RealCarIsaacLabTaskCfg:
     return cfg
 
 
-class RealCarTask:
+class RealCarTask(gym.Env if gym is not None else object):
     def __init__(self, simulation_app: SimulationApp, cfg: RealCarIsaacLabTaskCfg) -> None:
+        if gym is None:
+            raise ModuleNotFoundError("gymnasium is required for RealCarTask.")
+        super().__init__()
         self.simulation_app = simulation_app
         self.cfg = replace(cfg, env=CarEnvCfg(**cfg.env.__dict__))
         if not bool(self.cfg.enable_rgb):
@@ -76,8 +84,13 @@ def make_real_car_task(simulation_app: SimulationApp, cfg: RealCarIsaacLabTaskCf
 
 def build_argparser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Real car Isaac Lab style task launcher.")
-    parser.add_argument("--headless", action="store_true", help="Run Isaac Sim without UI.")
-    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--headless",
+        action=argparse.BooleanOptionalAction,
+        default=True,
+        help="Run Isaac Sim without UI (default: headless). Use --no-headless to show UI.",
+    )
+    parser.add_argument("--seed", type=int, default=42)
     parser.add_argument("--num-envs", type=int, default=1)
     return parser
 
