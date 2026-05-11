@@ -41,13 +41,25 @@ class FirstEpisodeFusionVideoCallback(BaseCallback):
         self._step = 0
         self._logged_top_ok = False
         self._logged_top_fallback = False
+        self._actual_output_path = self.output_path
 
     def _ensure_writer(self, frame_w: int, frame_h: int) -> None:
         if self._writer is not None or (not self._recording_enabled):
             return
         self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        # 续训时避免覆盖旧的 first_episode_fusion.avi
+        candidate = self.output_path
+        if candidate.exists():
+            idx = 2
+            while True:
+                alt = candidate.with_name(f"{candidate.stem}_{idx}{candidate.suffix}")
+                if not alt.exists():
+                    candidate = alt
+                    break
+                idx += 1
+        self._actual_output_path = candidate
         writer = cv2.VideoWriter(
-            str(self.output_path),
+            str(self._actual_output_path),
             cv2.VideoWriter_fourcc(*"MJPG"),
             float(self.fps),
             (frame_w, frame_h),
@@ -99,6 +111,72 @@ class FirstEpisodeFusionVideoCallback(BaseCallback):
         bird = self._make_birdview(pose, size=512, scale=70.0)
         return cv2.resize(bird, (640, 360), interpolation=cv2.INTER_LINEAR)
 
+    def _overlay_coach_route(self, panel_bgr: np.ndarray, info: dict, pose: np.ndarray) -> np.ndarray:
+        route = info.get("coach_route_xy", None)
+        if route is None:
+            return panel_bgr
+        route = np.asarray(route, dtype=np.float32)
+        if route.ndim != 2 or route.shape[1] < 2 or route.shape[0] <= 0:
+            return panel_bgr
+
+        h, w = panel_bgr.shape[:2]
+        cam_pose = info.get("top_camera_world_pose", None)
+        cam_intr = info.get("top_camera_intrinsics", None)
+        if cam_pose is None or cam_intr is None:
+            return panel_bgr
+        cp = np.asarray(cam_pose, dtype=np.float32).reshape(-1)
+        ci = np.asarray(cam_intr, dtype=np.float32).reshape(-1)
+        if cp.shape[0] < 6 or ci.shape[0] < 5:
+            return panel_bgr
+        cx, cy, cz = float(cp[0]), float(cp[1]), float(cp[2])
+        focal_mm, h_ap_mm, v_ap_mm = float(ci[0]), float(ci[1]), float(ci[2])
+        src_w, src_h = float(ci[3]), float(ci[4])
+        fx = (focal_mm / max(h_ap_mm, 1.0e-6)) * src_w
+        fy = (focal_mm / max(v_ap_mm, 1.0e-6)) * src_h
+        u0 = 0.5 * src_w
+        v0 = 0.5 * src_h
+        pts = []
+        for i in range(route.shape[0]):
+            wx = float(route[i, 0])
+            wy = float(route[i, 1])
+            wz = 0.0
+            # 顶视相机朝向世界 -Z，近似正交俯视：Xw->u, Yw->v
+            dx = wx - cx
+            dy = wy - cy
+            dz = wz - cz
+            if abs(dz) < 1.0e-6:
+                continue
+            u = u0 + fx * (dx / -dz)
+            v = v0 - fy * (dy / -dz)
+            px = int(u * w / max(src_w, 1.0))
+            py = int(v * h / max(src_h, 1.0))
+            pts.append((px, py))
+        for i in range(1, len(pts)):
+            cv2.line(panel_bgr, pts[i - 1], pts[i], (40, 230, 40), 2, cv2.LINE_AA)
+        for p in pts:
+            cv2.circle(panel_bgr, p, 2, (40, 230, 40), -1, cv2.LINE_AA)
+
+        target = info.get("coach_target_xy", None)
+        if target is not None:
+            t = np.asarray(target, dtype=np.float32).reshape(-1)
+            if t.shape[0] >= 2:
+                txw = float(t[0])
+                tyw = float(t[1])
+                tzw = 0.0
+                dx = txw - cx
+                dy = tyw - cy
+                dz = tzw - cz
+                if abs(dz) > 1.0e-6:
+                    u = u0 + fx * (dx / -dz)
+                    v = v0 - fy * (dy / -dz)
+                    tx = int(u * w / max(src_w, 1.0))
+                    ty = int(v * h / max(src_h, 1.0))
+                else:
+                    tx, ty = -1, -1
+                if tx >= 0 and ty >= 0:
+                    cv2.circle(panel_bgr, (tx, ty), 6, (20, 255, 255), 2, cv2.LINE_AA)
+        return panel_bgr
+
     def _on_step(self) -> bool:
         if self._done or (not self._recording_enabled):
             return True
@@ -125,6 +203,7 @@ class FirstEpisodeFusionVideoCallback(BaseCallback):
         cam_bgr = cv2.cvtColor(rgb[..., :3], cv2.COLOR_RGB2BGR)
         cam_bgr = cv2.resize(cam_bgr, (640, 360), interpolation=cv2.INTER_NEAREST)
         left_panel = self._build_left_panel(info, pose)
+        left_panel = self._overlay_coach_route(left_panel, info, pose)
         left_h, left_w = left_panel.shape[:2]
         cam_bgr = cv2.resize(cam_bgr, (left_w, left_h), interpolation=cv2.INTER_NEAREST)
         fused = np.hstack([left_panel, cam_bgr])
@@ -183,6 +262,29 @@ class CheckpointFusionVideoCallback(BaseCallback):
         self._logged_top_ok = False
         self._logged_top_fallback = False
         self._last_pose = np.zeros(6, dtype=np.float32)
+
+    def _on_training_start(self) -> None:
+        """续训时对齐已存在的视频编号，避免从 episode=1 重新命名导致覆盖。"""
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        max_ep = 0
+        for p in self.output_dir.glob("checkpoint_ep_*_fusion.avi"):
+            stem = p.stem  # checkpoint_ep_000123_fusion
+            parts = stem.split("_")
+            if len(parts) < 4:
+                continue
+            try:
+                ep = int(parts[2])
+            except Exception:
+                continue
+            if ep > max_ep:
+                max_ep = ep
+        if max_ep > 0:
+            self._episode_count = max_ep
+            self._next_trigger = int(max_ep + self.save_freq)
+            print(
+                f"[CKPT_VIDEO] resume numbering from existing videos: "
+                f"last_ep={max_ep} next_trigger={self._next_trigger}"
+            )
 
     def _start_recording(self, target_step: int) -> None:
         self._recording = True
@@ -259,6 +361,68 @@ class CheckpointFusionVideoCallback(BaseCallback):
             self._logged_top_fallback = True
         bird = self._make_birdview(pose, size=512, scale=70.0)
         return cv2.resize(bird, (640, 360), interpolation=cv2.INTER_LINEAR)
+
+    def _overlay_coach_route(self, panel_bgr: np.ndarray, info: dict, pose: np.ndarray) -> np.ndarray:
+        route = info.get("coach_route_xy", None)
+        if route is None:
+            return panel_bgr
+        route = np.asarray(route, dtype=np.float32)
+        if route.ndim != 2 or route.shape[1] < 2 or route.shape[0] <= 0:
+            return panel_bgr
+
+        h, w = panel_bgr.shape[:2]
+        cam_pose = info.get("top_camera_world_pose", None)
+        cam_intr = info.get("top_camera_intrinsics", None)
+        if cam_pose is None or cam_intr is None:
+            return panel_bgr
+        cp = np.asarray(cam_pose, dtype=np.float32).reshape(-1)
+        ci = np.asarray(cam_intr, dtype=np.float32).reshape(-1)
+        if cp.shape[0] < 6 or ci.shape[0] < 5:
+            return panel_bgr
+        cx, cy, cz = float(cp[0]), float(cp[1]), float(cp[2])
+        focal_mm, h_ap_mm, v_ap_mm = float(ci[0]), float(ci[1]), float(ci[2])
+        src_w, src_h = float(ci[3]), float(ci[4])
+        fx = (focal_mm / max(h_ap_mm, 1.0e-6)) * src_w
+        fy = (focal_mm / max(v_ap_mm, 1.0e-6)) * src_h
+        u0 = 0.5 * src_w
+        v0 = 0.5 * src_h
+        pts = []
+        for i in range(route.shape[0]):
+            wx = float(route[i, 0])
+            wy = float(route[i, 1])
+            wz = 0.0
+            dx = wx - cx
+            dy = wy - cy
+            dz = wz - cz
+            if abs(dz) < 1.0e-6:
+                continue
+            u = u0 + fx * (dx / -dz)
+            v = v0 - fy * (dy / -dz)
+            px = int(u * w / max(src_w, 1.0))
+            py = int(v * h / max(src_h, 1.0))
+            pts.append((px, py))
+        for i in range(1, len(pts)):
+            cv2.line(panel_bgr, pts[i - 1], pts[i], (40, 230, 40), 2, cv2.LINE_AA)
+        for p in pts:
+            cv2.circle(panel_bgr, p, 2, (40, 230, 40), -1, cv2.LINE_AA)
+
+        target = info.get("coach_target_xy", None)
+        if target is not None:
+            t = np.asarray(target, dtype=np.float32).reshape(-1)
+            if t.shape[0] >= 2:
+                txw = float(t[0])
+                tyw = float(t[1])
+                tzw = 0.0
+                dx = txw - cx
+                dy = tyw - cy
+                dz = tzw - cz
+                if abs(dz) > 1.0e-6:
+                    u = u0 + fx * (dx / -dz)
+                    v = v0 - fy * (dy / -dz)
+                    tx = int(u * w / max(src_w, 1.0))
+                    ty = int(v * h / max(src_h, 1.0))
+                    cv2.circle(panel_bgr, (tx, ty), 6, (20, 255, 255), 2, cv2.LINE_AA)
+        return panel_bgr
 
     def _get_env_frame_bundle(self) -> dict | None:
         """当 infos 丢失字段时，从底层环境接口补取最新帧。"""
@@ -382,6 +546,7 @@ class CheckpointFusionVideoCallback(BaseCallback):
         if top_rgb is not None:
             info_for_panel["top_rgb"] = top_rgb
         left_panel = self._build_left_panel(info_for_panel, pose)
+        left_panel = self._overlay_coach_route(left_panel, info_for_panel, pose)
         left_h, left_w = left_panel.shape[:2]
         cam_bgr = cv2.resize(cam_bgr, (left_w, left_h), interpolation=cv2.INTER_NEAREST)
         fused = np.hstack([left_panel, cam_bgr])
@@ -400,6 +565,21 @@ class CheckpointFusionVideoCallback(BaseCallback):
             f"rpy_deg=({roll_deg:+.1f},{pitch_deg:+.1f},{yaw_deg:+.1f})",
             f"action(L,R)=({left:+.3f},{right:+.3f})",
         ]
+        reward_terms = info.get("reward_terms", None)
+        reward_total = float(info.get("reward_total", 0.0))
+        overlay.append(f"reward_total={reward_total:+.4f}")
+        if isinstance(reward_terms, dict):
+            term_pairs = []
+            for k, v in reward_terms.items():
+                if str(k) == "total":
+                    continue
+                try:
+                    term_pairs.append((str(k), float(v)))
+                except Exception:
+                    continue
+            term_pairs.sort(key=lambda kv: abs(kv[1]), reverse=True)
+            for k, v in term_pairs[:3]:
+                overlay.append(f"{k}={v:+.4f}")
         for i, text in enumerate(overlay):
             y = 26 + i * 24
             cv2.putText(fused, text, (14, y), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (20, 20, 20), 2, cv2.LINE_AA)
@@ -447,153 +627,108 @@ class RewardTrendCallback(BaseCallback):
         return True
 
 
-class StepTraceCallback(BaseCallback):
-    """Record per-step traces for offline alignment analysis."""
+class EpisodeFrameTxtTraceCallback(BaseCallback):
+    """逐帧写入文本分析文件，内容覆盖到视频级别可复盘信息。"""
 
-    def __init__(self, output_path: Path, max_steps: int = 12000, report_every_steps: int = 200) -> None:
+    def __init__(self, output_path: Path) -> None:
         super().__init__()
         self.output_path = output_path
-        self.report_path = self.output_path.parent / "analysis_report.txt"
-        self.max_steps = int(max(100, max_steps))
-        self.report_every_steps = int(max(20, report_every_steps))
-        self._records = []
-        self._saved = False
-        self._last_report_step = -1
+        self._fh = None
+        self._episode_idx = 1
+        self._episode_step = 0
 
-    @staticmethod
-    def _safe_corr(a: np.ndarray, b: np.ndarray) -> float:
-        if a.size == 0 or b.size == 0:
-            return 0.0
-        if float(np.std(a)) < 1.0e-9 or float(np.std(b)) < 1.0e-9:
-            return 0.0
-        return float(np.corrcoef(a, b)[0, 1])
-
-    @staticmethod
-    def _lag_corr(x: np.ndarray, y: np.ndarray, max_lag: int = 50) -> tuple[int, float]:
-        lags = range(-max_lag, max_lag + 1)
-        best_lag = 0
-        best_corr = 0.0
-        best_abs = -1.0
-        for lag in lags:
-            if lag < 0:
-                xa = x[-lag:]
-                ya = y[: y.shape[0] + lag]
-            elif lag > 0:
-                xa = x[: x.shape[0] - lag]
-                ya = y[lag:]
-            else:
-                xa = x
-                ya = y
-            c = StepTraceCallback._safe_corr(xa, ya)
-            if abs(c) > best_abs:
-                best_abs = abs(c)
-                best_corr = c
-                best_lag = lag
-        return int(best_lag), float(best_corr)
-
-    def _write_running_report(self) -> None:
-        n = len(self._records)
-        if n < 10:
-            return
-        blocked = np.array([float(r["camera_blocked"]) for r in self._records], dtype=np.float32)
-        applied = np.stack([r["action_applied"] for r in self._records], axis=0).astype(np.float32)
-        action_sum = 0.5 * (applied[:, 0] + applied[:, 1])
-        action_diff = np.abs(applied[:, 0] - applied[:, 1])
-        action_delta = np.zeros_like(action_sum)
-        action_delta[1:] = np.abs(action_sum[1:] - action_sum[:-1])
-        lag, lag_corr = self._lag_corr(blocked, action_delta, max_lag=40)
-        corr_blocked_sum = self._safe_corr(blocked, action_sum)
-        corr_blocked_diff = self._safe_corr(blocked, action_diff)
-
-        self.report_path.parent.mkdir(parents=True, exist_ok=True)
-        with self.report_path.open("w", encoding="utf-8") as f:
-            f.write(f"n_steps={n}\n")
-            f.write(f"latest_step={self._records[-1]['step']}\n")
-            f.write(f"best_lag_blocked_to_action_delta={lag}\n")
-            f.write(f"best_corr_blocked_to_action_delta={lag_corr:+.6f}\n")
-            f.write(f"corr_blocked_action_sum={corr_blocked_sum:+.6f}\n")
-            f.write(f"corr_blocked_action_diff={corr_blocked_diff:+.6f}\n")
+    def _on_training_start(self) -> None:
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        # 续训时追加写入，并从最后一条记录继续 episode 编号。
+        if self.output_path.exists() and self.output_path.stat().st_size > 0:
+            last_payload = None
+            with self.output_path.open("r", encoding="utf-8") as rf:
+                for line in rf:
+                    s = line.strip()
+                    if not s or s.startswith("#"):
+                        continue
+                    try:
+                        last_payload = json.loads(s)
+                    except Exception:
+                        continue
+            if isinstance(last_payload, dict):
+                try:
+                    self._episode_idx = int(last_payload.get("episode", 1))
+                    self._episode_step = int(last_payload.get("episode_step", 0))
+                    if bool(last_payload.get("terminated", False)) or bool(last_payload.get("truncated", False)):
+                        self._episode_idx += 1
+                        self._episode_step = 0
+                except Exception:
+                    self._episode_idx = 1
+                    self._episode_step = 0
+            self._fh = self.output_path.open("a", encoding="utf-8", buffering=1)
+            self._fh.write("# resume append\n")
+        else:
+            self._fh = self.output_path.open("w", encoding="utf-8", buffering=1)
+            self._fh.write("# per-frame trace\n")
 
     def _on_step(self) -> bool:
-        if len(self._records) >= self.max_steps:
-            return True
-
         infos = self.locals.get("infos", None)
         if not infos:
             return True
         info = infos[0]
-
-        rgb = info.get("rgb", None)
-        imu = info.get("imu", None)
-        action_raw = info.get("action_raw", None)
-        action_applied = info.get("action_applied", None)
-        pose = info.get("pose", None)
-        reward_terms = info.get("reward_terms", None)
-
-        if rgb is None or imu is None or action_raw is None or action_applied is None:
+        if not isinstance(info, dict):
             return True
 
-        record = {
-            "step": int(self.num_timesteps),
-            "rgb": np.asarray(rgb, dtype=np.uint8),
-            "imu": np.asarray(imu, dtype=np.float32),
-            "action_raw": np.asarray(action_raw, dtype=np.float32),
-            "action_applied": np.asarray(action_applied, dtype=np.float32),
-            "pose": np.asarray(pose, dtype=np.float32) if pose is not None else np.zeros(6, dtype=np.float32),
-            "camera_blocked": float(info.get("camera_blocked", 0.0)),
-            "camera_balance": float(info.get("camera_balance", 0.0)),
-            "camera_clear_center": float(info.get("camera_clear_center", 0.0)),
+        self._episode_step += 1
+        pose = np.asarray(info.get("pose", np.zeros(6, dtype=np.float32)), dtype=np.float32).reshape(-1)
+        if pose.shape[0] < 6:
+            pose = np.zeros(6, dtype=np.float32)
+        reward_terms = info.get("reward_terms", {})
+        if not isinstance(reward_terms, dict):
+            reward_terms = {}
+        metrics = info.get("metrics", {})
+        if not isinstance(metrics, dict):
+            metrics = {}
+        obstacle_aabbs = info.get("obstacle_aabbs_xy", [])
+        if not isinstance(obstacle_aabbs, list):
+            obstacle_aabbs = []
+        wall_info = info.get("wall_info", {})
+        if not isinstance(wall_info, dict):
+            wall_info = {}
+
+        payload = {
+            "episode": int(self._episode_idx),
+            "episode_step": int(info.get("episode_step", self._episode_step)),
+            "global_step": int(self.num_timesteps),
+            "pose_xyzrpy": [float(x) for x in pose[:6]],
+            "action_raw": [float(x) for x in np.asarray(info.get("action_raw", [0.0, 0.0]), dtype=np.float32).reshape(-1)[:2]],
+            "action_applied": [float(x) for x in np.asarray(info.get("action_applied", [0.0, 0.0]), dtype=np.float32).reshape(-1)[:2]],
             "reward_total": float(info.get("reward_total", 0.0)),
-            "reward_terms": reward_terms if isinstance(reward_terms, dict) else {},
+            "reward_terms": {str(k): float(v) for k, v in reward_terms.items()},
+            "metrics": {str(k): float(v) for k, v in metrics.items()},
+            "wall_info": {str(k): float(v) for k, v in wall_info.items()},
+            "obstacle_aabbs_xy": [],
+            "terminated": bool(info.get("terminated", False)),
+            "truncated": bool(info.get("truncated", False)),
+            "success": bool(info.get("success", False)),
         }
-        self._records.append(record)
-        cur_step = int(self.num_timesteps)
-        if self._last_report_step < 0 or (cur_step - self._last_report_step) >= self.report_every_steps:
-            self._write_running_report()
-            self._last_report_step = cur_step
+        for box in obstacle_aabbs:
+            try:
+                a, b, c, d = box
+                payload["obstacle_aabbs_xy"].append([float(a), float(b), float(c), float(d)])
+            except Exception:
+                continue
+        if self._fh is not None:
+            self._fh.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+        dones = self.locals.get("dones", None)
+        done_count = int(np.sum(np.asarray(dones, dtype=np.int32))) if dones is not None else 0
+        if done_count > 0:
+            self._episode_idx += done_count
+            self._episode_step = 0
         return True
 
     def _on_training_end(self) -> None:
-        if self._saved:
-            return
-        self.output_path.parent.mkdir(parents=True, exist_ok=True)
-        n = len(self._records)
-        if n <= 0:
-            print("[STEP_TRACE] no records, skip save")
-            return
-
-        steps = np.array([r["step"] for r in self._records], dtype=np.int32)
-        rgbs = np.stack([r["rgb"] for r in self._records], axis=0).astype(np.uint8)
-        imus = np.stack([r["imu"] for r in self._records], axis=0).astype(np.float32)
-        action_raws = np.stack([r["action_raw"] for r in self._records], axis=0).astype(np.float32)
-        action_applieds = np.stack([r["action_applied"] for r in self._records], axis=0).astype(np.float32)
-        poses = np.stack([r["pose"] for r in self._records], axis=0).astype(np.float32)
-        camera_blocked = np.array([r["camera_blocked"] for r in self._records], dtype=np.float32)
-        camera_balance = np.array([r["camera_balance"] for r in self._records], dtype=np.float32)
-        camera_clear_center = np.array([r["camera_clear_center"] for r in self._records], dtype=np.float32)
-        reward_total = np.array([r["reward_total"] for r in self._records], dtype=np.float32)
-        reward_terms_json = np.array(
-            [json.dumps(r["reward_terms"], ensure_ascii=False) for r in self._records],
-            dtype=object,
-        )
-
-        np.savez_compressed(
-            str(self.output_path),
-            steps=steps,
-            rgb=rgbs,
-            imu=imus,
-            action_raw=action_raws,
-            action_applied=action_applieds,
-            pose=poses,
-            camera_blocked=camera_blocked,
-            camera_balance=camera_balance,
-            camera_clear_center=camera_clear_center,
-            reward_total=reward_total,
-            reward_terms_json=reward_terms_json,
-        )
-        print(f"[STEP_TRACE] saved {n} steps to: {self.output_path}")
-        self._write_running_report()
-        self._saved = True
+        if self._fh is not None:
+            self._fh.flush()
+            self._fh.close()
+            self._fh = None
 
 
 class EpisodeCheckpointCallback(BaseCallback):
@@ -605,6 +740,24 @@ class EpisodeCheckpointCallback(BaseCallback):
         self.name_prefix = str(name_prefix)
         self.save_every_episodes = int(max(1, save_every_episodes))
         self.episode_count = 0
+
+    def _on_training_start(self) -> None:
+        """续训时按现有 checkpoint 视频编号接续 episode 计数。"""
+        video_dir = self.save_dir.parent / "video"
+        max_ep = 0
+        if video_dir.exists():
+            for p in video_dir.glob("checkpoint_ep_*_fusion.avi"):
+                parts = p.stem.split("_")
+                if len(parts) < 4:
+                    continue
+                try:
+                    ep = int(parts[2])
+                except Exception:
+                    continue
+                max_ep = max(max_ep, ep)
+        if max_ep > 0:
+            self.episode_count = int(max_ep)
+            print(f"[CHECKPOINT_EP] resume episode counter from {self.episode_count}")
 
     def _on_step(self) -> bool:
         dones = self.locals.get("dones", None)
@@ -625,11 +778,16 @@ class EpisodeCheckpointCallback(BaseCallback):
 class EpisodeProgressCallback(BaseCallback):
     """每秒打印一次当前训练轮次与轮内步数。"""
 
-    def __init__(self, print_interval_sec: float = 1.0, console_fd: int | None = None) -> None:
+    def __init__(
+        self,
+        print_interval_sec: float = 1.0,
+        console_fd: int | None = None,
+        start_episode: int = 1,
+    ) -> None:
         super().__init__()
         self.print_interval_sec = float(max(0.2, print_interval_sec))
         self.console_fd = console_fd
-        self.episode_count = 1
+        self.episode_count = int(max(1, start_episode))
         self.episode_step = 0
         self._last_print_ts = 0.0
 
@@ -671,6 +829,24 @@ class ReproStateCallback(BaseCallback):
         self.save_freq = int(max(1, save_every_episodes))
         self._episode_count = 0
 
+    def _on_training_start(self) -> None:
+        """续训时对齐已完成轮次计数，避免按轮保存节奏错位。"""
+        video_dir = self.save_dir.parent / "video"
+        max_ep = 0
+        if video_dir.exists():
+            for p in video_dir.glob("checkpoint_ep_*_fusion.avi"):
+                parts = p.stem.split("_")
+                if len(parts) < 4:
+                    continue
+                try:
+                    ep = int(parts[2])
+                except Exception:
+                    continue
+                max_ep = max(max_ep, ep)
+        if max_ep > 0:
+            self._episode_count = int(max_ep)
+            print(f"[REPRO_STATE] resume episode counter from {self._episode_count}")
+
     def _get_env_obj(self):
         env = self.training_env
         if hasattr(env, "envs") and len(env.envs) > 0:
@@ -689,12 +865,18 @@ class ReproStateCallback(BaseCallback):
             "torch_cpu_rng_state": torch.get_rng_state(),
             "torch_cuda_rng_state_all": torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None,
             "env_rng_state": None,
+            "env_episode_count": None,
         }
         if env_obj is not None and hasattr(env_obj, "rng"):
             try:
                 payload["env_rng_state"] = env_obj.rng.bit_generator.state
             except Exception:
                 payload["env_rng_state"] = None
+        if env_obj is not None and hasattr(env_obj, "_episode_count"):
+            try:
+                payload["env_episode_count"] = int(getattr(env_obj, "_episode_count"))
+            except Exception:
+                payload["env_episode_count"] = None
         return payload
 
     def _save_state(self, step: int, is_final: bool = False) -> None:
@@ -728,18 +910,16 @@ class ReproStateCallback(BaseCallback):
 
 def main() -> None:
     parser = build_argparser()
-    parser.add_argument("--timesteps", type=int, default=10000)
-    parser.add_argument("--logdir", type=str, default="./logs/isaaclab_task")
-    parser.add_argument("--checkpoint-every-episodes", type=int, default=1)
+    parser.add_argument("--timesteps", type=int, default=1000000)
+    parser.add_argument("--logdir", type=str, default="./logs")
+    parser.add_argument("--checkpoint-every-episodes", type=int, default=10)
     parser.add_argument("--reward-trend-every", type=int, default=200)
     parser.add_argument("--reward-trend-window", type=int, default=200)
-    parser.add_argument("--trace-max-steps", type=int, default=12000)
-    parser.add_argument("--trace-report-every", type=int, default=200)
     parser.add_argument("--progress-print-interval-sec", type=float, default=1.0)
     parser.add_argument(
         "--inherit-from",
         type=str,
-        default="",
+        default="",#./logs/run_20260510_205551
         help="继承训练目录；为空时自动新建 run 目录。",
     )
     parser.add_argument(
@@ -760,6 +940,19 @@ def main() -> None:
         log_root.mkdir(parents=True, exist_ok=True)
     ckpt_root = log_root / "checkpoints"
     ckpt_root.mkdir(parents=True, exist_ok=True)
+    video_root = log_root / "video"
+    video_root.mkdir(parents=True, exist_ok=True)
+
+    existing_max_episode = 0
+    for p in video_root.glob("checkpoint_ep_*_fusion.avi"):
+        parts = p.stem.split("_")
+        if len(parts) < 4:
+            continue
+        try:
+            ep = int(parts[2])
+        except Exception:
+            continue
+        existing_max_episode = max(existing_max_episode, ep)
 
     engine_log_path = Path(args.engine_log_txt).resolve() if str(args.engine_log_txt).strip() else (log_root / "engine_runtime.log")
     engine_log_path.parent.mkdir(parents=True, exist_ok=True)
@@ -847,6 +1040,9 @@ def main() -> None:
                         break
                 if loaded_state is not None:
                     try:
+                        if loaded_state.get("num_timesteps") is not None:
+                            model.num_timesteps = int(loaded_state["num_timesteps"])
+                            print(f"[REPRO_STATE] restored num_timesteps={model.num_timesteps}")
                         random.setstate(loaded_state["python_random_state"])
                         np.random.set_state(loaded_state["numpy_random_state"])
                         torch.set_rng_state(loaded_state["torch_cpu_rng_state"])
@@ -855,6 +1051,16 @@ def main() -> None:
                         env_obj = env.env if hasattr(env, "env") else None
                         if env_obj is not None and hasattr(env_obj, "rng") and loaded_state.get("env_rng_state") is not None:
                             env_obj.rng.bit_generator.state = loaded_state["env_rng_state"]
+                        if (
+                            env_obj is not None
+                            and hasattr(env_obj, "_episode_count")
+                            and loaded_state.get("env_episode_count") is not None
+                        ):
+                            try:
+                                env_obj._episode_count = int(loaded_state["env_episode_count"])
+                                print(f"[REPRO_STATE] restored env_episode_count={env_obj._episode_count}")
+                            except Exception:
+                                pass
                     except Exception as exc:
                         print(f"[REPRO_STATE][WARN] restore failed: {exc}")
             else:
@@ -874,14 +1080,12 @@ def main() -> None:
             window_size=int(args.reward_trend_window),
         )
         checkpoint_fusion_cb = CheckpointFusionVideoCallback(
-            output_dir=log_root / "video",
+            output_dir=video_root,
             save_every_episodes=int(args.checkpoint_every_episodes),
             fps=15,
         )
-        step_trace_cb = StepTraceCallback(
-            output_path=log_root / "analysis" / "step_trace.npz",
-            max_steps=int(args.trace_max_steps),
-            report_every_steps=int(args.trace_report_every),
+        frame_txt_trace_cb = EpisodeFrameTxtTraceCallback(
+            output_path=log_root / "analysis" / "episode_frame_trace.txt",
         )
         repro_state_cb = ReproStateCallback(
             save_dir=ckpt_root,
@@ -890,10 +1094,20 @@ def main() -> None:
         progress_cb = EpisodeProgressCallback(
             print_interval_sec=float(args.progress_print_interval_sec),
             console_fd=saved_stdout_fd,
+            start_episode=int(max(1, existing_max_episode + 1)),
         )
         model.learn(
             total_timesteps=int(args.timesteps),
-            callback=[checkpoint_cb, fusion_video_cb, reward_trend_cb, checkpoint_fusion_cb, step_trace_cb, repro_state_cb, progress_cb],
+            reset_num_timesteps=(not bool(str(args.inherit_from).strip())),
+            callback=[
+                checkpoint_cb,
+                fusion_video_cb,
+                reward_trend_cb,
+                checkpoint_fusion_cb,
+                frame_txt_trace_cb,
+                repro_state_cb,
+                progress_cb,
+            ],
             progress_bar=False,
         )
 

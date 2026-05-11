@@ -16,7 +16,7 @@ def _parse_args():
         choices=["random", "ppo"],
         help="Strategy type. Default is random for smoke-check.",
     )
-    p.add_argument("--model", type=str, default="D:\mac\project\deeplearning_car_isaac\\train\logs\isaaclab_task\\run_20260509_233520\\real_car_rgb_imu_final.zip", help="Path to PPO .zip model. Required when --policy ppo.")
+    p.add_argument("--model", type=str, default="D:\mac\project\deeplearning_car_isaac\\train\logs\\run_20260510_205551\\real_car_rgb_imu_final.zip", help="Path to PPO .zip model. Required when --policy ppo.")
     p.add_argument("--status-print-every", type=int, default=10)
     p.add_argument("--max-steps", type=int, default=0, help="0 means no step limit; stop by closing windows.")
     p.add_argument("--deterministic", action="store_true")

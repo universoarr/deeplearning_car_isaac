@@ -63,7 +63,7 @@ class CarEnvCfg:
     free_static_friction: float = 0.8
     free_dynamic_friction: float = 0.6
     course_length: float = 3.0
-    lane_half_width: float = 0.3
+    lane_half_width: float = 0.45
     wall_height: float = 0.08
     obstacle_count: int = 8
     # 课程学习：前期降低难度，后期逐步恢复到目标难度。
@@ -72,6 +72,8 @@ class CarEnvCfg:
     curriculum_start_obstacle_count: int = 2
     curriculum_start_lane_half_width_scale: float = 1.5
     collision_radius_xy: float = 0.06
+    wall_collision_radius_xy: float = 0.03
+    obstacle_collision_radius_xy: float = 0.03
     camera_mount_x: float = -0.02
     camera_mount_y: float = 0.0
     camera_mount_z: float = -0.005
@@ -80,7 +82,7 @@ class CarEnvCfg:
     camera_mount_yaw_deg: float = -90.0
     top_camera_mount_x: float = 0.0
     top_camera_mount_y: float = 0.0
-    top_camera_mount_z: float = 0.35
+    top_camera_mount_z: float = 1.0
     top_camera_mount_roll_deg: float = 0.0
     top_camera_mount_pitch_deg: float = 0.0
     top_camera_mount_yaw_deg: float = 0.0
@@ -96,19 +98,21 @@ class CarEnvCfg:
     terminate_roll_pitch_abs_deg: float = 45.0
     terminate_z_min: float = -0.10
     reward_forward_gain: float = 35.0
-    reward_lane_penalty: float = 1.4
-    reward_heading_penalty: float = 0.6
+    reward_lane_penalty: float = 40.0
+    reward_centerline_y0_penalty: float = 50.0
     reward_success_bonus: float = 30.0
-    reward_camera_avoid_gain: float = 2.0
-    reward_camera_block_penalty: float = 1.6
-    reward_camera_clear_forward_gain: float = 1.4
-    # 接近障碍物的几何惩罚系数（越靠近惩罚越大），用于优先学会绕障。
-    reward_obstacle_proximity_penalty: float = 2.8
-    reward_action_diff_penalty: float = 0.8
-    reward_spin_rate_penalty: float = 0.15
-    reward_dual_drive_gain: float = 0.5
-    reward_idle_penalty: float = -0.15
-    reward_collision_penalty: float = -10.0
+    reward_camera_avoid_gain: float = 0.8
+    reward_camera_block_penalty: float = 0.6
+    # 顶视摄像头“教练”奖励（仅训练期使用特权信息，不影响部署输入）
+    coach_enable: bool = True
+    reward_coach_route_gain: float = 50.0
+    coach_route_horizon_m: float = 1.2
+    coach_route_points: int = 8
+    coach_obstacle_clearance_m: float = 0.10
+    reward_action_diff_penalty: float = 0.2
+    reward_idle_penalty: float = -1.5
+    reward_reverse_termination_penalty: float = -100.0
+    reward_collision_penalty: float = -100.0
     cruise_pwm_ratio: float = 0.7
     cruise_delta_ratio: float = 0.3
 
@@ -151,6 +155,11 @@ class BaseCarEnv:
         self._episode_count = 0
         self._lane_half_width_current = float(self.cfg.lane_half_width)
         self._obstacle_count_current = int(self.cfg.obstacle_count)
+        self._wall_inner_y_current = float(self.cfg.lane_half_width)
+        self._lane_center_y_world = 0.0
+        self._last_coach_route_xy = np.zeros((0, 2), dtype=np.float32)
+        self._last_coach_target_xy = np.zeros(2, dtype=np.float32)
+        self._max_x_reached = 0.0
 
     def reset(self, seed: int | None = None) -> Tuple[np.ndarray, Dict]:
         if seed is not None:
@@ -185,9 +194,18 @@ class BaseCarEnv:
         pos, rpy = self._get_base_pose()
         self.init_pos = pos.copy()
         self.init_rpy = rpy.copy()
+        self._max_x_reached = float(self.init_pos[0])
+        # 车道墙在世界坐标系中始终关于 y=0 对称，碰撞中心线也固定用世界 y=0。
+        self._lane_center_y_world = 0.0
         yaw0 = float(rpy[2])
         self.track_forward = np.array([cos(yaw0), sin(yaw0)], dtype=np.float32)
         self.track_left = np.array([-sin(yaw0), cos(yaw0)], dtype=np.float32)
+        print(
+            "[WALL_COLLISION_CFG] "
+            f"lane_center_y={self._lane_center_y_world:+.4f} "
+            f"wall_inner_y={self._wall_inner_y_current:.4f} "
+            f"wall_collision_radius={float(self.cfg.wall_collision_radius_xy):.4f}"
+        )
         self.last_action[:] = 0.0
         self.step_count = 0
         obs, metrics = self._build_obs(pos, rpy, pos, rpy)
@@ -213,11 +231,17 @@ class BaseCarEnv:
         end_obs = int(max(0, self.cfg.obstacle_count))
         obs_float = float(start_obs) + (float(end_obs) - float(start_obs)) * progress
         self._obstacle_count_current = int(round(obs_float))
+        # 与 _spawn_lane_walls 中墙几何保持一致：
+        # 墙中心在 lane_half_width_current + 0.02，墙厚(全宽)为 0.01，内沿 = center - 0.005。
+        self._wall_inner_y_current = float(self._lane_half_width_current + 0.02 - 0.005)
+        # 与墙体生成坐标保持一致：中心线固定在世界 y=0。
+        self._lane_center_y_world = 0.0
 
         print(
             "[CURRICULUM] "
             f"episode={self._episode_count} progress={progress:.3f} "
             f"lane_half_width={self._lane_half_width_current:.3f} "
+            f"wall_inner_y={self._wall_inner_y_current:.3f} "
             f"obstacle_count={self._obstacle_count_current}"
         )
 
@@ -261,8 +285,19 @@ class BaseCarEnv:
         self._maybe_capture_rgb()
         self._last_camera_signals = self._extract_camera_avoidance_signals()
         obs, metrics = self._build_obs(pos_before, rpy_before, pos_after, rpy_after)
-        reward = self._compute_reward(pos_before, pos_after, metrics, action)
+        reward = self._compute_reward(pos_before, pos_after, rpy_after, metrics, action)
         terminated = self._terminated(pos_after, rpy_after, metrics)
+        # 倒车即死亡：按“历史最大 x 的回撤”判定，而不是相邻两帧差值。
+        cur_x = float(pos_after[0])
+        self._max_x_reached = max(float(self._max_x_reached), cur_x)
+        reverse_drawdown = float(self._max_x_reached - cur_x)
+        reverse_terminated = bool(reverse_drawdown > 0.01)
+        if reverse_terminated:
+            terminated = True
+            reverse_pen = float(self.cfg.reward_reverse_termination_penalty)
+            reward += reverse_pen
+            self._last_reward_terms["reverse_termination_penalty"] = reverse_pen
+            self._last_reward_terms["total"] = float(self._last_reward_terms.get("total", 0.0) + reverse_pen)
         truncated = self.step_count >= self.cfg.max_episode_steps
         success = False
         progress_dist = float(np.dot(pos_after[:2] - self.init_pos[:2], self.track_forward))
@@ -277,12 +312,44 @@ class BaseCarEnv:
             "targets": targets,
             "command": cmd.as_tuple(),
             "success": success,
+            "reverse_terminated": bool(reverse_terminated),
+            "reverse_drawdown_x": float(reverse_drawdown),
+            "max_x_reached": float(self._max_x_reached),
+            "episode_step": int(self.step_count),
+            "terminated": bool(terminated),
+            "truncated": bool(truncated),
             "reward_terms": dict(self._last_reward_terms),
             "reward_total": float(reward),
             "action_raw": raw_action.copy(),
             "action_applied": action.copy(),
             "pose": np.concatenate([pos_after, rpy_after]).astype(np.float32),
             "imu": np.array([obs[0], obs[1], obs[2], rpy_after[0], rpy_after[1], rpy_after[2]], dtype=np.float32),
+            "coach_target_xy": (float(self._last_coach_target_xy[0]), float(self._last_coach_target_xy[1])),
+            "coach_route_xy": self._last_coach_route_xy.copy(),
+            "top_camera_world_pose": (
+                float(pos_after[0] + self.cfg.top_camera_mount_x),
+                float(pos_after[1] + self.cfg.top_camera_mount_y),
+                float(self.cfg.top_camera_mount_z),
+                float(self.cfg.top_camera_mount_roll_deg),
+                float(self.cfg.top_camera_mount_pitch_deg),
+                float(self.cfg.top_camera_mount_yaw_deg),
+            ),
+            "top_camera_intrinsics": (
+                float(self.cfg.camera_focal_length_mm),
+                float(self.cfg.camera_horizontal_aperture_mm),
+                float(self.cfg.camera_vertical_aperture_mm),
+                int(self.cfg.top_camera_width),
+                int(self.cfg.top_camera_height),
+            ),
+            "wall_info": {
+                "lane_center_y_world": float(self._lane_center_y_world),
+                "wall_inner_y_current": float(self._wall_inner_y_current),
+                "lane_half_width_current": float(self._lane_half_width_current),
+            },
+            "obstacle_aabbs_xy": [
+                (float(min_x), float(max_x), float(min_y), float(max_y))
+                for (min_x, max_x, min_y, max_y) in self._obstacle_aabbs_xy
+            ],
         }
         if self._last_rgb is not None:
             info["rgb"] = self._last_rgb
@@ -481,17 +548,21 @@ class BaseCarEnv:
         obs_n = int(max(0, self._obstacle_count_current))
         if obs_n <= 0:
             return
-        xs = np.linspace(0.4, self.cfg.course_length - 0.3, obs_n)
+        # 将首个障碍离起点拉远，减少开局立即遇障导致的训练抖动。
+        xs = np.linspace(0.8, self.cfg.course_length - 0.3, obs_n)
         for i, x_center in enumerate(xs):
             x_center = float(x_center + self.rng.uniform(-0.05, 0.05))
             y_center = float(
                 self.rng.uniform(-float(self._lane_half_width_current) * 0.65, float(self._lane_half_width_current) * 0.65)
             )
-            half_x = float(self.rng.uniform(0.02, 0.035))
-            half_y = float(self.rng.uniform(0.03, 0.07))
-            z_half = float(self.rng.uniform(0.015, 0.05))
+            # 缩小障碍物尺寸，降低几何占道面积。
+            half_x = float(self.rng.uniform(0.014, 0.024))
+            half_y = float(self.rng.uniform(0.020, 0.045))
+            z_half = float(self.rng.uniform(0.012, 0.035))
             cube = UsdGeom.Cube.Define(stage, f"/World/Obstacles/obs_{i:02d}")
             cube.CreateSizeAttr(1.0)
+            # 障碍物可视化改为黑色。
+            UsdGeom.Gprim(cube.GetPrim()).CreateDisplayColorAttr().Set([Gf.Vec3f(0.0, 0.0, 0.0)])
             xform = UsdGeom.Xformable(cube.GetPrim())
             xform.AddTranslateOp().Set(Gf.Vec3f(x_center, y_center, z_half))
             xform.AddScaleOp().Set(Gf.Vec3f(half_x * 2.0, half_y * 2.0, z_half * 2.0))
@@ -502,7 +573,8 @@ class BaseCarEnv:
         """基于障碍物二维包围盒做快速碰撞判定。"""
         x = float(pos_xy[0])
         y = float(pos_xy[1])
-        r = float(self.cfg.collision_radius_xy)
+        # 障碍碰撞单独使用更小的半径，避免“离障碍较远就死亡”。
+        r = float(self.cfg.obstacle_collision_radius_xy)
         for min_x, max_x, min_y, max_y in self._obstacle_aabbs_xy:
             if (x + r) >= min_x and (x - r) <= max_x and (y + r) >= min_y and (y - r) <= max_y:
                 return True
@@ -535,11 +607,11 @@ class BaseCarEnv:
         return best
 
     def _hit_lane_wall(self, pos_xy: np.ndarray) -> bool:
-        """按车体碰撞半径判断是否触碰到左右边界墙。"""
-        delta_xy = np.asarray(pos_xy, dtype=np.float32) - self.init_pos[:2]
-        lateral = float(abs(np.dot(delta_xy, self.track_left)))
-        # 墙体内沿位于 lane_half_width 附近；用碰撞半径做触碰判定，避免“中心点未过线但车体已碰墙”。
-        return (lateral + float(self.cfg.collision_radius_xy)) >= float(self.cfg.lane_half_width)
+        """按世界坐标墙内沿判定触墙，避免姿态投影导致漏判。"""
+        # 墙体沿世界 X 方向摆放，左右边界由世界 Y 决定。
+        y = float(pos_xy[1])
+        lateral_world = abs(y - float(self._lane_center_y_world))
+        return (lateral_world + float(self.cfg.wall_collision_radius_xy)) >= float(self._wall_inner_y_current)
 
     def _spawn_car(self) -> None:
         Gf, PhysxSchema, _, UsdGeom, _, UsdPhysics = self._import_pxr()
@@ -711,15 +783,88 @@ class BaseCarEnv:
             "camera_clear_center": clear_center,
         }
 
-    def _compute_reward(self, pos_before: np.ndarray, pos_after: np.ndarray, metrics: Dict[str, float], action: np.ndarray) -> float:
+    def _compute_coach_route(self, pos_xy: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+        """基于障碍几何生成“回归 y=0 且避障”的前向参考路线（世界坐标 x-y）。"""
+        n_pts = int(max(2, self.cfg.coach_route_points))
+        horizon = float(max(0.4, self.cfg.coach_route_horizon_m))
+        x0 = float(pos_xy[0])
+        y0 = float(pos_xy[1])
+        # 从当前位置起步，保证叠加线的起点就是车当前位置。
+        xs = np.linspace(x0, x0 + horizon, n_pts, dtype=np.float32)
+        # 基线：无障碍时，路线按前向距离指数收敛到车道中心 y=0。
+        # alpha 越大越接近前方；k 越大收敛越快。
+        alpha = np.linspace(0.0, 1.0, n_pts, dtype=np.float32)
+        k = 3.2
+        ys = (y0 * np.exp(-k * alpha)).astype(np.float32)
+
+        lane_limit = float(self._wall_inner_y_current - self.cfg.collision_radius_xy - 0.01)
+        clearance = float(max(0.02, self.cfg.coach_obstacle_clearance_m))
+
+        for i in range(n_pts):
+            x = float(xs[i])
+            y_shift = 0.0
+            # 对前方障碍产生“横向排斥”，形成可通行路线。
+            for min_x, max_x, min_y, max_y in self._obstacle_aabbs_xy:
+                if x < (min_x - clearance) or x > (max_x + clearance):
+                    continue
+                y_center = 0.5 * (min_y + max_y)
+                dist_y = float(ys[i] - y_center)
+                span_y = float((max_y - min_y) * 0.5 + clearance)
+                if abs(dist_y) < span_y:
+                    # 在障碍横向影响带内，按远离中心方向推开。
+                    push_dir = -1.0 if dist_y < 0.0 else 1.0
+                    push_mag = (span_y - abs(dist_y))
+                    y_shift += push_dir * push_mag
+            # 在“回中线基线”基础上叠加避障偏移，得到最终参考 y。
+            ys[i] = float(np.clip(ys[i] + y_shift, -lane_limit, lane_limit))
+
+        route = np.stack([xs, ys], axis=1).astype(np.float32)
+        target = route[min(2, n_pts - 1)].copy()
+        return route, target
+
+    def _compute_reward(
+        self,
+        pos_before: np.ndarray,
+        pos_after: np.ndarray,
+        rpy_after: np.ndarray,
+        metrics: Dict[str, float],
+        action: np.ndarray,
+    ) -> float:
         # 前进项改为“相对初始点在世界坐标 x 方向的位移”，不再使用相邻两步位移。
         progress = float(pos_after[0] - self.init_pos[0])
         terms = defaultdict(float)
-        # 仅保留用户指定的奖励项：
-        # 1) 前进奖励 2) 车道偏离惩罚 3) 原地不动惩罚 4) 碰撞惩罚
+        # 当前保留核心项并补充“摄像头信号+差速惩罚”以强化避障学习。
         terms["forward_progress"] = self.cfg.reward_forward_gain * progress
         terms["lane_penalty"] = -self.cfg.reward_lane_penalty * metrics["lateral_error"]
+        # 新增：惩罚偏离世界坐标 y=0 的距离，约束车辆尽量沿中心线行驶。
+        terms["centerline_y0_penalty"] = -self.cfg.reward_centerline_y0_penalty * float(abs(pos_after[1]))
+        camera_blocked = float(metrics.get("camera_blocked", 0.0))
+        camera_balance = float(metrics.get("camera_balance", 0.0))
         forward_cmd = float(max((float(action[0]) + float(action[1])) * 0.5, 0.0))
+        # 摄像头信号：前方越拥堵，前冲惩罚越大。
+        terms["camera_block_penalty"] = -self.cfg.reward_camera_block_penalty * camera_blocked * forward_cmd
+        # 摄像头信号：右侧更通畅就鼓励右转，左侧更通畅就鼓励左转。
+        steer = float(action[1] - action[0])
+        terms["camera_avoid"] = self.cfg.reward_camera_avoid_gain * float(np.tanh(3.0 * camera_balance * steer))
+        # 差速惩罚：抑制长期单轮驱动/原地转圈。
+        terms["action_diff_penalty"] = -self.cfg.reward_action_diff_penalty * float(abs(float(action[0]) - float(action[1])))
+        if bool(self.cfg.coach_enable):
+            route, target = self._compute_coach_route(pos_after[:2])
+            self._last_coach_route_xy = route
+            self._last_coach_target_xy = target
+            # 教练信号1b：跟随“参考路线目标点”的期望航向。
+            # 目标点在车体左侧 -> 需要左转(steer<0)；目标点在右侧 -> 需要右转(steer>0)。
+            route_dx = float(target[0] - pos_after[0])
+            route_dy = float(target[1] - pos_after[1])
+            desired_yaw = float(np.arctan2(route_dy, max(route_dx, 1.0e-4)))
+            yaw_now = float(rpy_after[2])
+            yaw_err = _wrap_angle(desired_yaw - yaw_now)
+            route_steer_target = float(np.tanh(1.8 * yaw_err))
+            route_steer_align = 1.0 - min(abs(steer - route_steer_target), 2.0) / 2.0
+            terms["coach_route_bonus"] = self.cfg.reward_coach_route_gain * float(route_steer_align)
+        else:
+            self._last_coach_route_xy = np.zeros((0, 2), dtype=np.float32)
+            self._last_coach_target_xy = np.zeros(2, dtype=np.float32)
         # 防止全零动作成为局部最优：低油门且无前进时给固定惩罚。
         if forward_cmd < 0.05 and progress <= 0.0:
             terms["idle_penalty"] = float(self.cfg.reward_idle_penalty)

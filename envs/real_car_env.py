@@ -22,8 +22,8 @@ REAL_CAR_RGB_CFG = CarEnvCfg(
     camera_mount_pitch_deg=0.0,
     camera_mount_yaw_deg=-90.0,
     rgb_observation=True,
-    camera_width=64,
-    camera_height=64,
+    camera_width=128,
+    camera_height=128,
 )
 # 兼容旧变量名，统一指向 RGB 配置。
 REAL_CAR_CFG = replace(REAL_CAR_RGB_CFG)
